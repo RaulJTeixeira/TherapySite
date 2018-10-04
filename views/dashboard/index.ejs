@@ -98,16 +98,9 @@
 		</div>
 		<div class="col-xs-12 col-md-4">
 			<h3>Discord</h3>
-			<% if( char.discordUser ) { %>
-			<p>Connected as: <img style="width: 32px; height: 32px;" src="https://cdn.discordapp.com/avatars/<%= char.discordUser.id %>/<%= char.discordUser.avatar %>.png"> <%= char.discordUser.username %></p>
-			<% } else { %>
-			<p>Connect your discord account so you can be automatically authed in Discord.</p>
-			<% } %>
-			<% if( locals.discordLoginURL ) { %>
-			<a class="btn btn-sm btn-discord mb-3" href="<%= discordLoginURL %>">
+			<a class="btn btn-sm btn-discord mb-3" href="https://discord.gg/M4GBpex">
 				<img src="/images/discord_white.svg"> Connect Discord
 			</a>
-			<% } %>
 		</div>
 	</div>
 </div>
