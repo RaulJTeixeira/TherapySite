@@ -1,0 +1,273 @@
+<% include ../../partials/header %>
+<style>
+	.unauth {
+		color: gray;
+	}
+	.unauth img {
+		filter: gray; /* IE6-9 */
+		-webkit-filter: grayscale(1); /* Google Chrome, Safari 6+ & Opera 15+ */
+		filter: grayscale(1); /* Microsoft Edge and Firefox 35+ */
+	}
+	.inCorp {
+		background: rgba(0,65,0,.5);
+	}
+	.nonCorp {
+		background: rgba(0,0,65,.5);
+	}
+	.alt td:first-of-type {
+		visibility: hidden;
+	}
+</style>
+<div class="container-fluid content">
+	<div class="row">
+		<div class="col">
+			<table class="table table-sm">
+				<thead>
+				<tr>
+					<th colspan="2">Non Corp</th>
+					<th colspan="2">Out of Corp</th>
+					<th colspan="2">Incorp</th>
+				</tr>
+				</thead>
+				<tbody>
+				<tr>
+					<td class="sm">Total Mains: </td><td id="stats-total-mains"></td>
+					<td class="sm">Total Mains: </td><td id="stats-total-mains"></td>
+					<td class="sm">Total Mains: </td><td id="stats-incorp-total-mains"></td>
+				</tr>
+				<tr>
+					<td class="sm">Total Alts: </td><td id="stats-total-alts"></td>
+					<td class="sm">Total Alts: </td><td id="stats-total-alts"></td>
+					<td class="sm">Total Alts: </td><td id="stats-incorp-total-alts"></td>
+				</tr>
+				<tr>
+					<td class="sm">Authed Pilots: </td><td id="stats-total-alts"></td>
+					<td class="sm">Authed Pilots: </td><td id="stats-total-alts"></td>
+					<td class="sm">Authed Pilots: </td><td id="stats-incorp-total-authed"></td>
+				</tr>
+				<tr>
+					<td class="sm">Total Pilots: </td><td id="stats-total-pilots"></td>
+					<td class="sm">Total Pilots: </td><td id="stats-total-pilots"></td>
+					<td class="sm">Total Pilots: </td><td id="stats-incorp-total-pilots"></td>
+				</tr>
+				<tr>
+					<td class="sm">Coverage: </td><td id="stats-coverage"></td>
+					<td class="sm">Coverage: </td><td id="stats-coverage"></td>
+					<td class="sm">Coverage: </td><td id="stats-incorp-coverage"></td>
+				</tr>
+				</tbody>
+			</table>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<h2>Registered non-members</h2>
+			<table class="table table-sm">
+				<tbody id="registered-nonmembers-list"></tbody>
+			</table>
+		</div>
+		<div class="col">
+			<div class="d-flex align-items-end justify-content-between mb-3">
+				<h2 class="mb-0">Therapy Pilots</h2>
+				<div>
+					<div class="form-check">
+						<label class="form-check-label">
+							<input class="form-check-input" type="checkbox" onclick="coverage.controls.showAlts(this, store.corpMainCharacters.sort(sort.byName), hooks.userList )"> Show alts
+						</label>
+					</div>
+				</div>
+			</div>
+			<table class="table table-sm table-v-align-middle">
+				<tbody id="user-list"></tbody>
+			</table>
+		</div>
+	</div>
+</div>
+<script>
+
+	let given = {
+		users: <%- JSON.stringify(characters) %>,
+		corpMembers: <%- JSON.stringify(corpMembers) %>
+	};
+
+	let store = {
+		corpMainCharacters: [],
+		altCharacters: [],
+		memberCharacters: [],
+		nonMemberCharacters: []
+	};
+
+	let hooks = {
+		registeredNonmembersList: document.getElementById('registered-nonmembers-list'),
+		userList: document.getElementById('user-list'),
+		stats: {
+			inCorp: {
+				coverage: 			document.getElementById('stats-incorp-coverage'),
+				totalAlts: 			document.getElementById('stats-incorp-total-alts'),
+				totalMains: 		document.getElementById('stats-incorp-total-mains'),
+				totalAuthedPilots: 	document.getElementById('stats-incorp-total-authed'),
+				totalPilots: 		document.getElementById('stats-incorp-total-pilots')
+			}
+		}
+	};
+
+	let pilots = {};
+
+	let sort = {
+		byName: function(a,b) { a=a.name.toLowerCase(); b=b.name.toLowerCase(); if( a > b )return 1; if( a < b ) return -1; return 0; }
+	};
+
+	(function initialize(){
+		let i, id, member, len;
+
+		// Adds all the corp members to a list and hash table
+		for( i = 0; i < given.corpMembers.length; i++ ) {
+			member = given.corpMembers[i];
+			id = member.character_id;
+
+			pilots[id] = {
+				id: member.character_id,
+				name: member.character_name,
+				alts: [],
+				inCorp: true,
+				isMain: true,
+				isAuthed: false
+			}
+
+			store.memberCharacters.push( pilots[id] );
+		}
+
+		// Updates the corp member list with DB data
+		for( i = 0; i < given.users.length; i++ ) {
+			let user = given.users[i];
+			id = user.CharacterID;
+
+			// User is a member update their data
+			if( pilots[ id ] ) {
+
+				pilots[ id ].parent = user.parent;
+				pilots[ id ].alts = user.alts;
+				pilots[ id ].isMain = (user.parent === null);
+				pilots[ id ].isAuthed = true;
+
+			} else { // User is an Non-member update their data
+				pilots[ id ] = {
+					id: user.CharacterID,
+					name: user.CharacterName,
+					parent: user.parent,
+					alts: user.alts,
+					inCorp: false,
+					isMain: (user.parent === null),
+					isAuthed: true
+				}
+			}
+
+			if( !pilots[ id ].inCorp )
+				store.nonMemberCharacters.push( pilots[ id ] );
+
+			if( user.parent ) // User is an alt
+				store.altCharacters.push( pilots[ id ] );
+		}
+
+
+		for( i = 0, len = store.memberCharacters.length; i < len; i++ ) {
+			member = store.memberCharacters[i];
+
+			if( member.isMain ) {
+				store.corpMainCharacters.push( member );
+				member.alts = member.alts.map(function( alt ){
+					return pilots[ alt.CharacterID ];
+				})
+			}
+		}
+
+		store.corpMainCharacters.sort( sort.byName );
+	})();
+
+
+	let coverage = (function(){
+
+		function renderAltRow( r, character ) {
+			console.log(character);
+
+			let classes = ['alt'];
+
+			if( character.isAuthed )
+				classes.push('authed');
+			else
+				classes.push('unauth');
+
+			if( character.inCorp )
+				classes.push('inCorp');
+			else
+				classes.push('nonCorp');
+
+
+			return r + '<tr class="' + classes.join(' ') + '">' +
+					'<td class="sm p-0"></td>' +
+					'<td class="sm p-0">' +
+					'<img src="https://imageserver.eveonline.com/Character/'+character.id+'_32.jpg">' +
+					'</td>' +
+					'<td><a href="/dashboard/' + character.id + '">' + character.name + '</a></td>' +
+					'<td class="text-right" style="padding-right: 15px;">' +
+                		'<span style="color: rgba(0,127,0,.8);">&#10004;</span>' +
+					'</td>' +
+					'</tr>';
+		}
+
+		function renderRow( showAlts, r, character ) {
+			return r + '<tr class="'+((character.isAuthed)?'authed':'unauth')+'">' +
+						'<td class="sm p-0">' +
+							'<img src="https://imageserver.eveonline.com/Character/'+character.id+'_32.jpg">' +
+						'</td>' +
+						'<td colspan="2">' +
+							((character.isAuthed)?
+							'<a href="/dashboard/' + character.id + '">' + character.name + '</a>'
+							:character.name) +
+						'</td>' +
+						'<td class="text-right" style="padding-right: 15px;">' +
+							((character.isAuthed)?
+								'<span style="color: rgba(0,127,0,.8);">&#10004;</span>' // Authenticated
+								:'<span style="color: rgba(127,0,0,.8);">&#10006;</span>' // Unauthenticated
+							) +
+
+						'</td>' +
+					'</tr>'
+					+ ((showAlts && character.alts.length)?character.alts.sort(sort.byName).reduce(renderAltRow,''):'');
+		}
+
+
+		let publicFunctions = {
+			controls: {
+				showAlts: function( elem, characters, hook ) {
+					publicFunctions.render( characters, hook, elem.checked );
+				}
+			},
+			render: function( characters, elem, showAlts ) {
+				elem.innerHTML = characters.reduce(renderRow.bind(null,showAlts), '' );
+			}
+		};
+
+		return publicFunctions;
+	})();
+
+
+	$(function(){
+		coverage.render( store.corpMainCharacters.sort(sort.byName), hooks.userList );
+		hooks.stats.inCorp.totalPilots.innerHTML = store.memberCharacters.length;
+
+		let authedCharacters = store.memberCharacters.filter(function( pilot ){
+			return pilot.isAuthed;
+		});
+		hooks.stats.inCorp.totalAuthedPilots.innerHTML = authedCharacters.length;
+
+		hooks.stats.inCorp.coverage.innerHTML = ( authedCharacters.length / store.memberCharacters.length * 100 ).toFixed(2) + ' %';
+		hooks.stats.inCorp.totalAlts.innerHTML = store.memberCharacters.filter(function( pilot ){
+			return pilot.isAuthed && !pilot.isMain;
+		}).length;
+		hooks.stats.inCorp.totalMains.innerHTML = store.memberCharacters.filter(function( pilot ){
+			return pilot.isAuthed && pilot.isMain;
+		}).length;
+	})
+</script>
+<% include ../../partials/footer %>

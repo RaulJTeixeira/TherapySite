@@ -1,0 +1,304 @@
+<% include ../../partials/header %>
+<style>
+	.list-group-item {
+		background: none;
+		padding: 3px;
+		border: 0;
+	}
+	.list-group-item.active {
+		color: white;
+		background: none;
+	}
+
+	#fitting-panel {
+		position: relative;
+		height:398px;
+		width:398px;
+		z-index: 3;
+	}
+	.textarea {
+
+	}
+	#high1, #high2, #high3, #high4, #high5, #high6, #high7, #high8,
+	#mid1, #mid2, #mid3, #mid4, #mid5, #mid6, #mid7, #mid8,
+	#low1, #low2, #low3, #low4, #low5, #low6, #low7, #low8,
+	#rig1, #rig2, #rig3 {
+		position: absolute;
+		height: 32px;
+		width: 32px;
+	}
+	#high1l,#high2l,#high3l,#high4l,#high5l,#high6l,#high7l,#high8l,
+	#mid1l,#mid2l,#mid3l,#mid4l,#mid5l,#mid6l,#mid7l,#mid8l,
+	#low1l,#low2l,#low3l,#low4l,#low5l,#low6l,#low7l,#low8l {
+		position: absolute;
+		width: 24px;
+		height: 24px;
+	}
+</style>
+<div class="container-fluid  mb-3">
+	<div class="row">
+		<div class="col-xs-12 col-md-2 p-0">
+			<div class="content">
+				<ul class="nav nav-tabs">
+					<li class="nav-item">
+						<a class="nav-link active" href="#">Alliance</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="#">Corporation</a>
+					</li>
+				</ul>
+				<div class="list-group">
+					<%
+					fittings = fittings.sort((a,b)=>{
+						if(a.ship > b.ship )
+							return 1;
+						if(a.ship < b.ship )
+							return -1;
+						return 0;
+					})
+					for( let i = 0; i < fittings.length; i++ ) { %>
+					<a href="#" class="list-group-item active"><%= fittings[i].name %></a>
+					<% } %>
+				</div>
+			</div>
+		</div>
+		<div class="col-xs-12 col-md-6">
+			<div class="content">
+				<button>Delete this fitting</button>
+				<div id="fitting-panel">
+					<div id="mask" style="position:absolute; left: 0; top: 0; width:398px; height:398px; z-index:-1;">
+						<img style="position:absolute; left:0; top:0; height:398px; width:398px;" src="/images/panel/tyrannis.png">
+					</div>
+					<div id="highx" style="position:absolute; left: 0; top: 0; width: 398px; height: 398px; z-index:-1;">
+						<img src="/images/panel/8h.png" alt="" style="border:0;">
+					</div>
+					<div id="high1" style="left:73px; top:60px;">
+						<a href="/item/37304/" data-toggle="tooltip" title="Quad 800mm Repeating Cannon II">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/37304_32.png" style="height: 32px; width: 32px;" alt="Quad 800mm Repeating Cannon II">
+						</a>
+					</div>
+					<div id="high2" style="left:102px; top:42px;">
+						<a href="/item/37304/" rel="tooltip" data-placement="top" title="" data-original-title="Quad 800mm Repeating Cannon II">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/37304_32.png" style="height: 32px; width: 32px;" alt="Quad 800mm Repeating Cannon II">
+						</a>
+					</div>
+					<div id="high3" style="left:134px; top:27px;">
+						<a href="/item/37304/" rel="tooltip" data-placement="top" title="" data-original-title="Quad 800mm Repeating Cannon II">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/37304_32.png" style="height: 32px; width: 32px;" alt="Quad 800mm Repeating Cannon II">
+						</a>
+					</div>
+					<div id="high4" style="left:169px; top:21px;">
+						<a href="/item/40633/" rel="tooltip" data-placement="top" title="" data-original-title="Bosonic Field Generator">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/40633_32.png" style="height: 32px; width: 32px;" alt="Bosonic Field Generator">
+						</a>
+					</div>
+					<div id="high5" style="left:203px; top:22px;">
+						<a href="/item/37304/" rel="tooltip" data-placement="top" title="" data-original-title="Quad 800mm Repeating Cannon II">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/37304_32.png" style="height: 32px; width: 32px;" alt="Quad 800mm Repeating Cannon II">
+						</a>
+					</div>
+					<div id="high6" style="left:238px; top:30px;">
+						<a href="/item/37304/" rel="tooltip" data-placement="top" title="" data-original-title="Quad 800mm Repeating Cannon II">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/37304_32.png" style="height: 32px; width: 32px;" alt="Quad 800mm Repeating Cannon II">
+						</a>
+					</div>
+					<div id="high7" style="left:270px; top:45px;">
+						<a href="/item/37304/" rel="tooltip" data-placement="top" title="" data-original-title="Quad 800mm Repeating Cannon II">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/37304_32.png" style="height: 32px; width: 32px;" alt="Quad 800mm Repeating Cannon II">
+						</a>
+					</div>
+					<div id="high8" style="left:295px; top:64px;">
+						<a href="/item/15963/" rel="tooltip" data-placement="top" title="" data-original-title="Imperial Navy Large EMP Smartbomb">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/15963_32.png" style="height: 32px; width: 32px;" alt="Imperial Navy Large EMP Smartbomb">
+						</a>
+					</div>
+					<div id="midx" style="position:absolute; left: 0; top: 0; width: 398px; height: 398px; z-index:-1;">
+						<img src="/images/panel/7m.png" alt="" style="border:0;">
+					</div>
+					<div id="mid1" style="left:26px; top:140px;">
+						<a href="/item/41251/" rel="tooltip" data-placement="top" title="" data-original-title="50000MN Quad LiF Restrained Microwarpdrive">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/41251_32.png" style="height: 32px; width: 32px;" alt="50000MN Quad LiF Restrained Microwarpdrive">
+						</a>
+					</div>
+					<div id="mid2" style="left:24px; top:176px;">
+						<a href="/item/41459/" rel="tooltip" data-placement="top" title="" data-original-title="CONCORD Capital Shield Extender">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/41459_32.png" style="height: 32px; width: 32px;" alt="CONCORD Capital Shield Extender">
+						</a>
+					</div>
+					<div id="mid3" style="left:23px; top:212px;">
+						<a href="/item/14238/" rel="tooltip" data-placement="top" title="" data-original-title="Shadow Serpentis Tracking Computer">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/14238_32.png" style="height: 32px; width: 32px;" alt="Shadow Serpentis Tracking Computer">
+						</a>
+					</div>
+					<div id="mid4" style="left:30px; top:245px;">
+						<a href="/item/14238/" rel="tooltip" data-placement="top" title="" data-original-title="Shadow Serpentis Tracking Computer">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/14238_32.png" style="height: 32px; width: 32px;" alt="Shadow Serpentis Tracking Computer">
+						</a>
+					</div>
+					<div id="mid5" style="left:46px; top:278px;">
+						<a href="/item/4347/" rel="tooltip" data-placement="top" title="" data-original-title="Pithum A-Type Adaptive Invulnerability Field">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/4347_32.png" style="height: 32px; width: 32px;" alt="Pithum A-Type Adaptive Invulnerability Field">
+						</a>
+					</div>
+					<div id="mid6" style="left:69px; top:304px;">
+						<a href="/item/4347/" rel="tooltip" data-placement="top" title="" data-original-title="Pithum A-Type Adaptive Invulnerability Field">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/4347_32.png" style="height: 32px; width: 32px;" alt="Pithum A-Type Adaptive Invulnerability Field">
+						</a>
+					</div>
+					<div id="mid7" style="left:100px; top:328px;">
+						<a href="/item/14236/" rel="tooltip" data-placement="top" title="" data-original-title="Shadow Serpentis Sensor Booster">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/14236_32.png" style="height: 32px; width: 32px;" alt="Shadow Serpentis Sensor Booster">
+						</a>
+					</div>
+					<div id="mid8" style="left:133px; top:342px;"></div>
+					<div id="lowx" style="position:absolute; left: 0; top: 0; width: 398px; height: 398px; z-index:-1;">
+						<img src="/images/panel/6l.png" alt="" style="border:0;">
+					</div>
+					<div id="low1" style="left:344px; top:143px;">
+						<a href="/item/33985/" rel="tooltip" data-placement="top" title="" data-original-title="Prototype Hyperspatial Accelerator">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/33985_32.png" style="height: 32px; width: 32px;" alt="Prototype Hyperspatial Accelerator">
+						</a>
+					</div>
+					<div id="low2" style="left:350px; top:178px;">
+						<a href="/item/33985/" rel="tooltip" data-placement="top" title="" data-original-title="Prototype Hyperspatial Accelerator">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/33985_32.png" style="height: 32px; width: 32px;" alt="Prototype Hyperspatial Accelerator">
+						</a>
+					</div>
+					<div id="low3" style="left:349px; top:213px;">
+						<a href="/item/15806/" rel="tooltip" data-placement="top" title="" data-original-title="Republic Fleet Gyrostabilizer">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/15806_32.png" style="height: 32px; width: 32px;" alt="Republic Fleet Gyrostabilizer">
+						</a>
+					</div>
+					<div id="low4" style="left:340px; top:246px;">
+						<a href="/item/15806/" rel="tooltip" data-placement="top" title="" data-original-title="Republic Fleet Gyrostabilizer">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/15806_32.png" style="height: 32px; width: 32px;" alt="Republic Fleet Gyrostabilizer">
+						</a>
+					</div>
+					<div id="low5" style="left:323px; top:277px;">
+						<a href="/item/15806/" rel="tooltip" data-placement="top" title="" data-original-title="Republic Fleet Gyrostabilizer">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/15806_32.png" style="height: 32px; width: 32px;" alt="Republic Fleet Gyrostabilizer">
+						</a>
+					</div>
+					<div id="low6" style="left:300px; top:304px;">
+						<a href="/item/15965/" rel="tooltip" data-placement="top" title="" data-original-title="Republic Fleet Tracking Enhancer">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/15965_32.png" style="height: 32px; width: 32px;" alt="Republic Fleet Tracking Enhancer">
+						</a>
+					</div>
+					<div id="low7" style="left:268px; top:324px;"></div>
+					<div id="low8" style="left:234px; top:338px;"></div>
+					<div id="rigxx" style="position:absolute; left: 0; top: 0; width: 398px; height: 398px; z-index:-1;">
+						<img src="/images/panel/3r.png" alt="" style="border:0;">
+					</div>
+					<div id="rig1" style="left:148px; top:259px;">
+						<a href="/item/31169/" rel="tooltip" data-placement="top" title="" data-original-title="Capital Hyperspatial Velocity Optimizer II">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/31169_32.png" style="height: 32px; width: 32px;" alt="Capital Hyperspatial Velocity Optimizer II">
+						</a>
+					</div>
+					<div id="rig2" style="left:185px; top:267px;">
+						<a href="/item/31169/" rel="tooltip" data-placement="top" title="" data-original-title="Capital Hyperspatial Velocity Optimizer II">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/31169_32.png" style="height: 32px; width: 32px;" alt="Capital Hyperspatial Velocity Optimizer II">
+						</a>
+					</div>
+					<div id="rig3" style="left:221px; top:259px;">
+						<a href="/item/31169/" rel="tooltip" data-placement="top" title="" data-original-title="Capital Hyperspatial Velocity Optimizer II">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/31169_32.png" style="height: 32px; width: 32px;" alt="Capital Hyperspatial Velocity Optimizer II">
+						</a>
+					</div>
+					<div id="high1l" style="left:94px; top:88px;">
+						<a href="/item/20739/" rel="tooltip" data-placement="top" title="" data-original-title="Arch Angel Depleted Uranium XL">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/20739_32.png" style="height: 32px; width: 32px;" alt="Arch Angel Depleted Uranium XL">
+						</a>
+					</div>
+					<div id="high2l" style="left:119px; top:70px;">
+						<a href="/item/20739/" rel="tooltip" data-placement="top" title="" data-original-title="Arch Angel Depleted Uranium XL">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/20739_32.png" style="height: 32px; width: 32px;" alt="Arch Angel Depleted Uranium XL">
+						</a>
+					</div>
+					<div id="high3l" style="left:146px; top:58px;">
+						<a href="/item/20739/" rel="tooltip" data-placement="top" title="" data-original-title="Arch Angel Depleted Uranium XL">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/20739_32.png" style="height: 32px; width: 32px;" alt="Arch Angel Depleted Uranium XL">
+						</a>
+					</div>
+					<div id="high4l" style="left:175px; top:52px;"></div>
+					<div id="high5l" style="left:204px; top:52px;">
+						<a href="/item/20739/" rel="tooltip" data-placement="top" title="" data-original-title="Arch Angel Depleted Uranium XL">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/20739_32.png" style="height: 32px; width: 32px;" alt="Arch Angel Depleted Uranium XL">
+						</a>
+					</div>
+					<div id="high6l" style="left:232px; top:60px;">
+						<a href="/item/20739/" rel="tooltip" data-placement="top" title="" data-original-title="Arch Angel Depleted Uranium XL">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/20739_32.png" style="height: 32px; width: 32px;" alt="Arch Angel Depleted Uranium XL">
+						</a>
+					</div>
+					<div id="high7l" style="left:258px; top:72px;">
+						<a href="/item/20739/" rel="tooltip" data-placement="top" title="" data-original-title="Arch Angel Depleted Uranium XL">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/20739_32.png" style="height: 32px; width: 32px;" alt="Arch Angel Depleted Uranium XL">
+						</a>
+					</div>
+					<div id="high8l" style="left:280px; top:91px;"></div>
+					<div id="mid1l" style="left:59px; top:154px;"></div>
+					<div id="mid2l" style="left:54px; top:182px;"></div>
+					<div id="mid3l" style="left:56px; top:210px;">
+						<a href="/item/29001/" rel="tooltip" data-placement="top" title="" data-original-title="Tracking Speed Script">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/29001_32.png" style="height: 32px; width: 32px;" alt="Tracking Speed Script">
+						</a>
+					</div>
+					<div id="mid4l" style="left:62px; top:238px;">
+						<a href="/item/29001/" rel="tooltip" data-placement="top" title="" data-original-title="Tracking Speed Script">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/29001_32.png" style="height: 32px; width: 32px;" alt="Tracking Speed Script">
+						</a>
+					</div>
+					<div id="mid5l" style="left:76px; top:265px;"></div>
+					<div id="mid6l" style="left:94px; top:288px;"></div>
+					<div id="mid7l" style="left:118px; top:305px;">
+						<a href="/item/29011/" rel="tooltip" data-placement="top" title="" data-original-title="Scan Resolution Script">
+							<img class="img-rounded" src="https://imageserver.eveonline.com/Type/29011_32.png" style="height: 32px; width: 32px;" alt="Scan Resolution Script">
+						</a>
+					</div>
+					<div id="mid8l" style="left:146px; top:318px;"></div>
+					<div id="low1l" style="left:315px; top:150px;"></div>
+					<div id="low2l" style="left:319px; top:179px;"></div>
+					<div id="low3l" style="left:318px; top:206px;"></div>
+					<div id="low4l" style="left:310px; top:234px;"></div>
+					<div id="low5l" style="left:297px; top:261px;"></div>
+					<div id="low6l" style="left:275px; top:283px;"></div>
+					<div id="low7l" style="left:251px; top:300px;"></div>
+					<div id="low8l" style="left:225px; top:310px;"></div>
+					<div id="bigship" style="position:absolute; left:72px; top:71px; width:256px; height:256px; z-index:-2;">
+						<a href="/ship/23773/" rel="tooltip" title="" class="" data-original-title="Ragnarok">
+							<img src="https://imageserver.eveonline.com/Render/23773_256.png" style="height: 256px; width: 256px;" class="eveimage img-rounded" alt="Ragnarok">
+						</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-xs-12 col-md-4">
+			<div class="content">
+				<form method="post">
+					<div>
+						<select name="organization">
+							<option>Alliance</option>
+							<option>Corporation</option>
+						</select>
+						<input name="doctrine" type="text" class="form-control" placeholder="Doctrine">
+					</div>
+					<textarea name="fitting" class="textarea scrollable" style="height: 800px;" placeholder="Paste a fitting here"></textarea>
+					<button name="addFitting" value="add">Add a fitting</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	function renderFitting( fitting ) {
+
+	}
+	$(()=>{
+		$('[data-toggle="tooltip"]')
+				.data( 'placement', 'top' )
+				.tooltip();
+	});
+
+</script>
+<% include ../../partials/footer %>

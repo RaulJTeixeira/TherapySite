@@ -1,0 +1,41 @@
+<% function pageIsActive(page, path){
+	if( page == path )
+		return 'active';
+} %>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Therapy.</title>
+	<link rel="apple-touch-icon" sizes="57x57" href="/images/icon/apple-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="/images/icon/apple-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="/images/icon/apple-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="/images/icon/apple-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="/images/icon/apple-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="/images/icon/apple-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="/images/icon/apple-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="/images/icon/apple-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="/images/icon/apple-icon-180x180.png">
+	<link rel="icon" type="image/png" sizes="192x192"  href="/images/icon/android-icon-192x192.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/images/icon/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="/images/icon/favicon-96x96.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/images/icon/favicon-16x16.png">
+	<link rel="manifest" href="/images/icon/manifest.json">
+	<meta name="msapplication-TileColor" content="#001bb0">
+	<meta name="msapplication-TileImage" content="/images/icon/ms-icon-144x144.png">
+	<meta name="theme-color" content="#001bb0">
+
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+	<script src="https://cdn.rawgit.com/michalsnik/aos/2.1.1/dist/aos.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/smooth-scroll/12.1.5/js/smooth-scroll.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/textillate/0.4.0/jquery.textillate.min.js"></script>
+
+	<link href="https://cdn.rawgit.com/michalsnik/aos/2.1.1/dist/aos.css" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css?family=Exo|Quantico" rel="stylesheet">
+	<link rel="stylesheet" href="<%= locals.assetFingerprint('/css/style.min.css') %>">
+</head>
+<body>

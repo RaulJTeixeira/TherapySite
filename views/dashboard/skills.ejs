@@ -1,0 +1,748 @@
+<% include ../../partials/header %>
+<style>
+	/* index.ejs */
+	.skill-flexer {
+		flex-wrap: wrap;
+		justify-content: space-between;
+	}
+	.skills-wrapper {
+		min-width: 22%;
+		margin-bottom: 10px;
+	}
+	table.skills-table {
+		width: 100%;
+	}
+	td.no-pad {
+		padding: 0;
+	}
+	.skills-table td,.skills-table th {
+		padding: 2px;
+		border-bottom: 1px solid #414141;
+		white-space: nowrap;
+		text-align: left;
+	}
+	.skills-table th {
+		text-align: center;
+	}
+	.skills-table tr:last-of-type td {
+		//border-bottom: none;
+	}
+	.skills-table .skill {
+		width: 20px;
+		min-width: 20px;
+		text-align: center;
+		border-bottom: none;
+	}
+	.skill-Am { text-align: center; font-size: 10px; background: #B38A2D; }
+	.skill-Cal { text-align: center; font-size: 10px; background: #0A3E91; }
+	.skill-Gal { text-align: center; font-size: 10px; background: #28483d; }
+	.skill-Min { text-align: center; font-size: 10px; background: #4f2121; }
+	.skill-level-u { background: #412020; }
+	.skill-level-0 { background: #7f0000; }
+	.skill-level-1 { background: #7f3e00; }
+	.skill-level-2 { background: #7f7f00; }
+	.skill-level-3 { background: #3e7f00; }
+	.skill-level-4 { background: #007f00; }
+	.skill-level-5 { background: #00c100; }
+
+	table.skills-table .skill-sm { padding:0; font-size: 10px; width: 15px; min-width: 15px; height: 15px }
+
+	table.attributes th, table.attributes td {
+		padding: 5px;
+		text-align: center;
+	}
+	table.attributes td {
+		border-top: 1px solid #414141;
+	}
+	tr.npc-corporation td {
+		background: rgba(0,0,180,.2);
+	}
+	.character-description {
+		background: rgba(127,127,127,.1);
+		padding: 5px 10px;
+		height: 185px;
+		width: 100%;
+		overflow-y:scroll;
+
+	}
+	.character-description font {
+		font-size: 12px !important;
+	}
+	table.alts-table td {
+		vertical-align: middle;
+	}
+</style>
+<script>
+	var given = {
+		skills: <%- JSON.stringify( skills ) %>,
+		typeIDs: <%- JSON.stringify( typeIDs ) %>,
+		skillGroupIDs: <%- JSON.stringify( skillGroupIDs ) %>
+	};
+</script>
+<% include ../../partials/dashboardNav %>
+<div class="container-fluid content mb-3">
+	<div class="row">
+		<div class="col">
+			<div class="d-flex flex-column flex-xl-row">
+				<div class="d-flex">
+					<img class="mr-3" src="//image.eveonline.com/Character/<%= char.CharacterID %>_256.jpg" style="width:200px;height:200px">
+					<div class="mr-3">
+						<h5 style="white-space: nowrap;"><%= char.CharacterName %></h5>
+						<p class="mb-2" style="padding: 5px;"><%= Number(skills.total_sp).toLocaleString() %> SP in <%= skills.skills.length %> skills</p>
+						<table class="attributes">
+							<thead>
+							<tr><th>INT</th><th>PER</th><th>CHA</th><th>WILL</th><th>MEM</th></tr>
+							</thead>
+							<tbody>
+							<tr>
+								<td><%= attributes.intelligence %></td><td><%= attributes.perception %></td><td><%= attributes.charisma %></td><td><%= attributes.willpower %></td><td><%= attributes.memory %></td>
+							</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+
+<div class="container-fluid content mb-3">
+	<div class="row">
+		<div class="col-md-9">
+			<div class="d-flex skill-flexer mb-3">
+				<div class="skills-wrapper">
+					<h4>Racial Skills</h4>
+					<table class="skills-table mb-3">
+						<thead>
+						<tr>
+							<th></th>
+							<th class="skill-Am">Am</th>
+							<th class="skill-Cal">Cal</th>
+							<th class="skill-Gal">Gal</th>
+							<th class="skill-Min">Min</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr>
+							<td>Frigate</td>
+							<td class="skill" data-skill="Amarr Frigate"></td>
+							<td class="skill" data-skill="Caldari Frigate"></td>
+							<td class="skill" data-skill="Gallente Frigate"></td>
+							<td class="skill" data-skill="Minmatar Frigate"></td>
+						</tr>
+						<tr>
+							<td>Destroyer</td>
+							<td class="skill" data-skill="Amarr Destroyer"></td>
+							<td class="skill" data-skill="Caldari Destroyer"></td>
+							<td class="skill" data-skill="Gallente Destroyer"></td>
+							<td class="skill" data-skill="Minmatar Destroyer"></td>
+						</tr>
+						<tr>
+							<td>Cruiser</td>
+							<td class="skill" data-skill="Amarr Cruiser"></td>
+							<td class="skill" data-skill="Caldari Cruiser"></td>
+							<td class="skill" data-skill="Gallente Cruiser"></td>
+							<td class="skill" data-skill="Minmatar Cruiser"></td>
+						</tr>
+						<tr>
+							<td>Battlecruiser</td>
+							<td class="skill" data-skill="Amarr Battlecruiser"></td>
+							<td class="skill" data-skill="Caldari Battlecruiser"></td>
+							<td class="skill" data-skill="Gallente Battlecruiser"></td>
+							<td class="skill" data-skill="Minmatar Battlecruiser"></td>
+						</tr>
+						<tr>
+							<td>Battleship</td>
+							<td class="skill" data-skill="Amarr Battleship"></td>
+							<td class="skill" data-skill="Caldari Battleship"></td>
+							<td class="skill" data-skill="Gallente Battleship"></td>
+							<td class="skill" data-skill="Minmatar Battleship"></td>
+						</tr>
+						</tbody>
+					</table>
+					<table class="skills-table mb-3">
+						<tbody>
+						<tr>
+							<td>T3 Cruiser</td>
+							<td class="skill" data-skill="Amarr Strategic Cruiser"></td>
+							<td class="skill" data-skill="Caldari Strategic Cruiser"></td>
+							<td class="skill" data-skill="Gallente Strategic Cruiser"></td>
+							<td class="skill" data-skill="Minmatar Strategic Cruiser"></td>
+						</tr>
+						<tr>
+							<td>T3C Skills</td>
+							<td class="t3c skill-sm" data-skills="Amarr Defensive Systems,Amarr Offensive Systems,Amarr Core Systems,Amarr Propulsion Systems">Legion skills</td>
+							<td class="t3c skill-sm" data-skills="Caldari Defensive Systems,Caldari Offensive Systems,Caldari Core Systems,Caldari Propulsion Systems">Tengu skills</td>
+							<td class="t3c skill-sm" data-skills="Gallente Defensive Systems,Gallente Offensive Systems,Gallente Core Systems,Gallente Propulsion Systems">Proteus skills</td>
+							<td class="t3c skill-sm" data-skills="Minmatar Defensive Systems,Minmatar Offensive Systems,Minmatar Core Systems,Minmatar Propulsion Systems">Loki skills</td>
+						</tr>
+					</table>
+					<table class="skills-table mb-3">
+						<tbody>
+						<tr>
+							<td>Carrier</td>
+							<td class="skill" data-skill="Amarr Carrier"></td>
+							<td class="skill" data-skill="Caldari Carrier"></td>
+							<td class="skill" data-skill="Gallente Carrier"></td>
+							<td class="skill" data-skill="Minmatar Carrier"></td>
+						</tr>
+						<tr>
+							<td>Dread</td>
+							<td class="skill" data-skill="Amarr Dreadnought"></td>
+							<td class="skill" data-skill="Caldari Dreadnought"></td>
+							<td class="skill" data-skill="Gallente Dreadnought"></td>
+							<td class="skill" data-skill="Minmatar Dreadnought"></td>
+						</tr>
+						<tr>
+							<td>Titan</td>
+							<td class="skill" data-skill="Amarr Titan"></td>
+							<td class="skill" data-skill="Caldari Titan"></td>
+							<td class="skill" data-skill="Gallente Titan"></td>
+							<td class="skill" data-skill="Minmatar Titan"></td>
+						</tr>
+						</tbody>
+					</table>
+					<table class="skills-table mb-3">
+						<tbody>
+						<tr>
+							<td>Industrial</td>
+							<td class="skill" data-skill="Amarr Industrial"></td>
+							<td class="skill" data-skill="Caldari Industrial"></td>
+							<td class="skill" data-skill="Gallente Industrial"></td>
+							<td class="skill" data-skill="Minmatar Industrial"></td>
+						</tr>
+						<tr>
+							<td>Freighter</td>
+							<td class="skill" data-skill="Amarr Freighter"></td>
+							<td class="skill" data-skill="Caldari Freighter"></td>
+							<td class="skill" data-skill="Gallente Freighter"></td>
+							<td class="skill" data-skill="Minmatar Freighter"></td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="skills-wrapper">
+					<h4>T2 Skills</h4>
+					<table class="skills-table mb-3">
+						<tbody>
+						<tr><td>Heavy Assault Cruisers</td><td class="skill" data-skill="Heavy Assault Cruisers"></td></tr>
+						<tr><td>Recon Ships</td><td class="skill" data-skill="Recon Ships"></td></tr>
+						<tr><td>Logistics</td><td class="skill" data-skill="">?????</td></tr>
+						</tbody>
+					</table>
+					<table class="skills-table mb-3">
+						<tbody>
+						<tr>
+						<tr><td>Black Ops</td><td class="skill" data-skill="Black Ops"></td></tr>
+						<tr><td>Marauders</td><td class="skill" data-skill="Marauders"></td></tr>
+						<tr><td>Transport Ships</td><td class="skill" data-skill="Transport Ships"></td></tr>
+						</tbody>
+					</table>
+					<table class="skills-table mb-3">
+						<tbody>
+						<tr>
+						<tr><td>Covert Ops</td><td class="skill" data-skill="Covert Ops"></td></tr>
+						<tr><td>Interceptors</td><td class="skill" data-skill="Interceptors"></td></tr>
+						<tr><td>Interdictors</td><td class="skill" data-skill="Interdictors"></td></tr>
+						</tbody>
+					</table>
+					<table class="skills-table mb-3">
+						<tbody>
+						<tr>
+						<tr><td>Mining Barge</td><td class="skill" data-skill="Mining Barge"></td></tr>
+						<tr><td>Exhumers</td><td class="skill" data-skill="Exhumers"></td></tr>
+						<tr><td>Jump Freighters</td><td class="skill" data-skill="Jump Freighters"></td></tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="skills-wrapper">
+					<h4>Capital Ships</h4>
+					<table class="skills-table">
+						<tr>
+							<td>jump skills</td>
+							<td class="skill" data-skill="Jump Drive Operation"></td>
+							<td class="skill" data-skill="Jump Drive Calibration"></td>
+							<td class="skill" data-skill="Jump Fuel Conservation"></td>
+						</tr>
+					</table>
+					<table class="skills-table mb-3">
+						<tbody>
+						<tr><td>Adv. Spaceship Cmd.</td><td class="skill" data-skill="Advanced Spaceship Command"></td></tr>
+						<tr><td>Capital Ships</td><td class="skill" data-skill="Capital Ships"></td></tr>
+						<tr><td>Jump Freighters</td><td class="skill" data-skill="Jump Freighters"></td></tr>
+						<tr><td>Capital Industrial Ships</td><td class="skill" data-skill="Capital Industrial Ships"></td></tr>
+						<tr><td>Industrial Command Ships</td><td class="skill" data-skill="Industrial Command Ships"></td></tr>
+						</tbody>
+					</table>
+					<table class="skills-table mb-3">
+						<tbody>
+						<tr><td>Siege</td><td class="skill" data-skill="Tactical Weapon Reconfiguration"></td></tr>
+						<tr><td>Indy Core</td><td class="skill" data-skill="Industrial Reconfiguration"></td></tr>
+						<tr><td>Clone Vat</td><td class="skill" data-skill="Cloning Facility Operation"></td></tr>
+						</tbody>
+					</table>
+					<table class="skills-table mb-3">
+						<tbody>
+						<tr><td>Cap Armour Rep</td><td class="skill" data-skill="Capital Remote Armor Repair Systems"></td></tr>
+						<tr><td>Cap Shield Rep</td><td class="skill" data-skill="Capital Shield Operation"></td></tr>
+						</tbody>
+					</table>
+					<table class="skills-table mb-3">
+						<tbody>
+						<tr><td>Doomsday Operation</td><td class="skill" data-skill="Doomsday Operation"></td></tr>
+						<tr><td>Portal Generation</td><td class="skill" data-skill="Portal Generation"></td></tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="skills-wrapper">
+					<h4>Weapons</h4>
+					<table class="skills-table">
+						<thead><tr><th></th><th>S</th><th>M</th><th>L</th><th>XL</th></tr></thead>
+						<tbody>
+						<tr>
+							<td>Laser?</td>
+							<td class="skill" data-skill="Small Energy Turret"></td>
+							<td class="skill" data-skill="Medium Energy Turret"></td>
+							<td class="skill" data-skill="Large Energy Turret"></td>
+							<td class="skill" data-skill="Capital Energy Turret"></td>
+						</tr>
+						<tr>
+							<td>Hybrid?</td>
+							<td class="skill" data-skill="Small Hybrid Turret"></td>
+							<td class="skill" data-skill="Medium Hybrid Turret"></td>
+							<td class="skill" data-skill="Large Hybrid Turret"></td>
+							<td class="skill" data-skill="Capital Hybrid Turret"></td>
+						</tr>
+						<tr>
+							<td>Projectile?</td>
+							<td class="skill" data-skill="Small Projectile Turret"></td>
+							<td class="skill" data-skill="Medium Projectile Turret"></td>
+							<td class="skill" data-skill="Large Projectile Turret"></td>
+							<td class="skill" data-skill="Capital Projectile Turret"></td>
+						</tr>
+						<tr>
+							<td>guided mssls</td>
+							<td class="skill" data-skill="Light Missiles"></td>
+							<td class="skill" data-skill="Heavy Missiles"></td>
+							<td class="skill" data-skill="Cruise Missiles"></td>
+							<td class="skill" data-skill="XL Cruise Missiles"></td>
+						</tr>
+						<tr>
+							<td>ungdd missls</td>
+							<td class="skill" data-skill="Light Missiles"></td>
+							<td class="skill" data-skill="Heavy Missiles"></td>
+							<td class="skill" data-skill="Cruise Missiles"></td>
+							<td class="skill" data-skill="XL Cruise Missiles"></td>
+						</tr>
+						</tbody>
+					</table>
+					<div class="quantico mt-2 mb-1">Weapon support skills</div>
+					<table class="skills-table mb-2">
+						<tbody>
+						<tr>
+							<td>turrets</td>
+							<td class="skill skill-sm" data-skill="Controlled Bursts"></td>
+							<td class="skill skill-sm" data-skill="Gunnery"></td>
+							<td class="skill skill-sm" data-skill="Motion Prediction"></td>
+							<td class="skill skill-sm" data-skill="Rapid Firing"></td>
+							<td class="skill skill-sm" data-skill="Sharpshooter"></td>
+							<td class="skill skill-sm" data-skill="Surgical Strike"></td>
+							<td class="skill skill-sm" data-skill="Trajectory Analysis"></td>
+						</tr>
+						<tr>
+							<td>missiles</td>
+							<td class="skill skill-sm" data-skill="Guided Missile Precision"></td>
+							<td class="skill skill-sm" data-skill="Missile Bombardment"></td>
+							<td class="skill skill-sm" data-skill="Missile Launcher Operation"></td>
+							<td class="skill skill-sm" data-skill="Missile Projection"></td>
+							<td class="skill skill-sm" data-skill="Rapid Launch"></td>
+							<td class="skill skill-sm" data-skill="Target Navigation Prediction"></td>
+							<td class="skill skill-sm" data-skill="Warhead Upgrades"></td>
+						</tr>
+						<tr>
+							<td>drones</td>
+							<td class="skill skill-sm" data-skill="Drones"></td>
+							<td class="skill skill-sm" data-skill="Drone Durability"></td>
+							<td class="skill skill-sm" data-skill="Drone Navigation"></td>
+							<td class="skill skill-sm" data-skill="Drone Sharpshooting"></td>
+							<td class="skill skill-sm" data-skill="Drone Interfacing"></td>
+							<td class="skill skill-sm" data-skill="Drone Avionics"></td>
+							<td class="skill skill-sm" data-skill="Advanced Drone Avionics"></td>
+						</tr>
+						</tbody>
+					</table>
+					<table class="skills-table mb-2">
+						<thead>
+						<tr><th></th><th>L</th><th>M</th><th>H</th><th style="font-size: 8px;">Sup</th><th style="font-size: 8px;">Sen</th></tr>
+						</thead>
+						<tbody>
+						<tr>
+							<td>Drones</td>
+							<td class="skill" data-skill="Light Drone Operation"></td>
+							<td class="skill" data-skill="Medium Drone Operation"></td>
+							<td class="skill" data-skill="Heavy Drone Operation"></td>
+							<td class="skill" data-skill="Repair Drone Operation"></td>
+							<td class="skill" data-skill="Sentry Drone Interfacing"></td>
+						</tr>
+						<tr>
+							<td>Fighters</td>
+							<td class="skill" data-skill="Light Fighters"></td>
+							<td class="skill" data-skill="Fighters"></td>
+							<td class="skill" data-skill="Heavy Fighters"></td>
+							<td class="skill" data-skill="Support Fighters"></td></tr>
+						</tbody>
+					</table>
+					<table class="skills-table">
+						<thead>
+						<tr>
+							<th></th>
+							<th class="skill-Am">Am</th>
+							<th class="skill-Cal">Cal</th>
+							<th class="skill-Gal">Gal</th>
+							<th class="skill-Min">Min</th>
+						</tr>
+						</thead>
+						<tbody>
+						<tr>
+							<td>Drone Spec</td>
+							<td class="skill" data-skill="Amarr Drone Specialization"></td>
+							<td class="skill" data-skill="Caldari Drone Specialization"></td>
+							<td class="skill" data-skill="Gallente Drone Specialization"></td>
+							<td class="skill" data-skill="Minmatar Drone Specialization"></td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="skills-wrapper">
+					<h4>Core Skills</h4>
+					<table class="skills-table mb-3">
+						<tbody>
+						<tr><td>Shield Management</td><td class="skill" data-skill="Shield Management"></td></tr>
+						<tr><td>Hull Upgrades</td><td class="skill" data-skill="Hull Upgrades"></td></tr>
+						<tr><td>Mechanics</td><td class="skill" data-skill="Mechanics"></td></tr>
+						<tr><td>Warp Drive Operation</td><td class="skill" data-skill="Warp Drive Operation"></td></tr>
+						<tr><td>Jury Rigging</td><td class="skill" data-skill="Jury Rigging"></td></tr>
+						</tbody>
+					</table>
+					<table class="skills-table mb-3">
+						<tbody>
+						<tr>
+							<td>CPU/PGU</td>
+							<td class="skill" data-skill="CPU Management"></td>
+							<td class="skill" data-skill="Power Grid Management"></td>
+						</tr>
+						<tr>
+							<td>Cap Skills</td>
+							<td class="skill" data-skill="Capacitor Management"></td>
+							<td class="skill" data-skill="Capacitor Systems Operation"></td>
+						</tr>
+						<tr>
+							<td>WU/AWU</td>
+							<td class="skill" data-skill="Weapon Upgrades"></td>
+							<td class="skill" data-skill="Advanced Weapon Upgrades"></td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="skills-wrapper">
+					<h4>Leadership</h4>
+					<table class="skills-table mb-3">
+						<tbody>
+						<tr><td>Leadership</td><td class="skill" data-skill="Leadership"></td></tr>
+						<tr><td>Wing Command</td><td class="skill" data-skill="Wing Command"></td></tr>
+						<tr><td>Fleet Command</td><td class="skill" data-skill="Fleet Command"></td></tr>
+						</tbody>
+					</table>
+					<div class="quantico mt-2 mb-1">Command skills</div>
+					<table class="skills-table mb-3">
+						<tbody>
+						<tr><td>Armored</td><td class="skill" data-skill="Armored Command"></td></tr>
+						<tr><td>Information</td><td class="skill" data-skill="Information Command"></td></tr>
+						<tr><td>Shield</td><td class="skill" data-skill="Shield Command"></td></tr>
+						</tbody>
+					</table>
+					<div class="quantico mt-2 mb-1">Specialist skills</div>
+					<table class="skills-table mb-3">
+						<tbody>
+						<tr><td>Armored Command</td><td class="skill" data-skill="Armored Command Specialist"></td></tr>
+						<tr><td>Information Command &nbsp;</td><td class="skill" data-skill="Information Command Specialist"></td></tr>
+						<tr><td>Command Burst</td><td class="skill" data-skill="Command Burst Specialist"></td></tr>
+						<tr><td>Shield Command</td><td class="skill" data-skill="Shield Command Specialist"></td></tr>
+						<tr><td>Skirmish Command</td><td class="skill" data-skill="Skirmish Command Specialist"></td></tr>
+						<tr><td>Warfare Link</td><td class="skill" data-skill="Warfare Link Specialist"></td></tr>
+						<tr><td>Siege Warfare</td><td class="skill" data-skill="Siege Warfare Specialist"></td></tr>
+						</tbody>
+					</table>
+					<table class="skills-table mb-3">
+						<tbody>
+						<tr><td>Spatial Phenomena</td><td class="skill" data-skill="Spatial Phenomena Generation"></td></tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="skills-wrapper">
+					<h4 class="mb-0">Industry</h4>
+					<table class="skills-table">
+						<thead><tr><th></th><th></th><th style="font-size: 8px">adv.</th></tr></thead>
+						<tbody>
+						<tr>
+							<td>Industry</td>
+							<td class="skill" data-skill="Industry">
+							<td class="skill" data-skill="Advanced Industry"></td>
+						</tr>
+						<tr>
+							<td>Mass Production</td>
+							<td class="skill" data-skill="Mass Production"></td>
+							<td class="skill" data-skill="Advanced Mass Production"></td>
+						</tr>
+						</tbody>
+					</table>
+					<table class="skills-table mb-3">
+						<tbody>
+						<tr><td>Drug Manufacturing</td><td class="skill" data-skill="Drug Manufacturing"></td></tr>
+						<tr><td>Supply Chain Mgmt</td><td class="skill" data-skill="Industry"></td></tr>
+						</tbody>
+					</table>
+					<table class="skills-table mb-3">
+						<tbody>
+						<tr><td>Mining</td><td class="skill" data-skill="Mining"></td></tr>
+						<tr><td>Mining Upgrades</td><td class="skill" data-skill="Mining Upgrades"></td></tr>
+						<tr><td>Ice Mining</td><td class="skill" data-skill="Ice Mining"></td></tr>
+						<tr><td>Gas Cloud Harvesting</td><td class="skill" data-skill="Gas Cloud Harvesting"></td></tr>
+						<tr><td>Deep Core Mining</td><td class="skill" data-skill="Deep Core Mining"></td></tr>
+						</tbody>
+					</table>
+					<table class="skills-table mb-3">
+						<tbody>
+						<tr><td>Production Efficiency</td><td class="skill" data-skill="Production Efficiency"></td></tr>
+						<tr><td>Scrapmetal Processing</td><td class="skill" data-skill="Scrapmetal Processing"></td></tr>
+						<tr><td>Ice Processing</td><td class="skill" data-skill="Ice Processing"></td></tr>
+						</tbody>
+					</table>
+					<table class="skills-table mb-3">
+						<tbody>
+						<tr><td>Research</td><td class="skill" data-skill="Research"></td></tr>
+						<tr><td>Science</td><td class="skill" data-skill="Science"></td></tr>
+						<tr><td>Metallurgy</td><td class="skill" data-skill="Metallurgy"></td></tr>
+						</tbody>
+					</table>
+					<div class="quantico mt-2 mb-1">Construction skills</div>
+					<table class="skills-table">
+						<thead><tr><th></th><th>S</th><th>M</th><th>L</th><th>XL</th><th style="font-size: 8px;">Indy</th><th style="font-size: 8px;">Out P.</th></tr></thead>
+						<tbody>
+						<tr>
+							<td>Ship</td>
+							<td class="skill" data-skill="Advanced Small Ship Construction"></td>
+							<td class="skill" data-skill="Advanced Medium Ship Construction"></td>
+							<td class="skill" data-skill="Advanced Large Ship Construction"></td>
+							<td class="skill" data-skill="Capital Ship Construction"></td>
+							<td class="skill" data-skill="Advanced Industrial Ship Construction"></td>
+							<td class="skill" data-skill="Outpost Construction"></td>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="skills-wrapper">
+					<h4>Misc</h4>
+					<div class="quantico mt-2 mb-1">Scanning</div>
+					<table class="skills-table mb-3">
+						<tbody>
+						<tr><td>Astrometrics</td><td class="skill" data-skill="Astrometrics"></td></tr>
+						<tr><td>Astrometric Acquisition</td><td class="skill" data-skill="Astrometric Acquisition"></td></tr>
+						<tr><td>Astrometric Pinpointing</td><td class="skill" data-skill="Astrometric Pinpointing"></td></tr>
+						<tr><td>Astrometric Rangefinding</td><td class="skill" data-skill="Astrometric Rangefinding"></td></tr>
+						<tr><td>Survey</td><td class="skill" data-skill="Survey"></td></tr>
+						</tbody>
+					</table>
+					<div class="quantico mt-2 mb-1">Your Elite Hunny</div>
+					<table class="skills-table mb-3">
+						<tbody>
+						<tr><td>Cynosural Field Theory</td><td class="skill" data-skill="Cynosural Field Theory"></td></tr>
+						<tr><td>Biology</td><td class="skill" data-skill="Biology"></td></tr>
+						<tr><td>Thermodynamics </td><td class="skill" data-skill="Thermodynamics"></td></tr>
+						</tbody>
+					</table>
+					<table class="skills-table mb-3">
+						<tbody>
+						<tr><td>Jump Clones</td><td class="skill" data-skill="Infomorph Psychology"></td><td class="skill" data-skill="Infomorph Synchronizing"></td></tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		<div class="col-md-3">
+			<div id="skills-details-hook"></div>
+		</div>
+	</div>
+</div>
+<script>
+	var store = {
+		skills: [],
+		skillNameHash: {}
+	};
+
+	var hooks = {
+		skillsDetails: document.getElementById('skills-details-hook')
+	};
+
+	var sort = {
+		byName: function(a,b) { a=a.name.toLowerCase(); b=b.name.toLowerCase(); if( a > b )return 1; if( a < b ) return -1; return 0; }
+	};
+
+	(function initialize(){
+		var skillIDHash = {}, i, lastDate = new Date();
+
+		for( i = 0; i < given.skills.skills.length; i++ ) {
+			var skill = given.skills.skills[i];
+
+			store.skills.push( skillIDHash[skill.skill_id] = {
+				id: skill.skill_id,
+				points: skill.skillpoints_in_skill,
+				level: skill.active_skill_level
+			});
+		}
+
+		for( i = 0; i < given.typeIDs.length; i++ ) {
+			var typeID = given.typeIDs[i];
+			var hash = skillIDHash[ typeID.id ];
+
+			hash.name = typeID.name;
+			hash.groupID = typeID.groupID;
+
+			store.skillNameHash[ hash.name ] = hash;
+		}
+
+
+	})();
+
+	$('.skill').map(function( i, elem ) {
+		elem = $(elem);
+
+		var skill = store.skillNameHash[ elem.data('skill') ];
+
+		elem.data( 'toggle', 'tooltip' )
+				.data( 'placement', 'top' )
+				.attr( 'title', elem.data('skill') );
+
+		elem.tooltip();
+
+		if( skill ) {
+			elem
+					.addClass( 'skill-level-' + skill.level )
+					.html( skill.level );
+		} else
+			elem.addClass( 'skill-level-u' ).html( 'u' );
+	});
+
+	$('.t3c').map(function( i, elem ){
+		elem = $( elem );
+
+		var skillNames = elem.data('skills').split(',');
+		var skills = skillNames.map(function( name ){
+			return store.skillNameHash[ name ];
+		});
+
+		var template =  '' +
+				'<table class="skills-table">' +
+				skillNames.reduce(function( r, name ){
+					var skill = store.skillNameHash[ name ];
+					if(!skill)
+						skill = {
+							level: 'u'
+						};
+
+					return r + '<tr>' +
+							'<td>' + name + '</td>' +
+							'<td class="skill skill-level-' + skill.level + '">' + skill.level + '</td>' +
+							'</tr>';
+				},'') +
+				'</table>';
+
+		var level = skills.reduce(function( t, skill ){
+				return t + ((skill)? skill.level: 0);
+		}, 0) / skills.length;
+
+		elem.attr('title', template);
+
+		elem.addClass('skill skill-level-' + Math.floor( level )).html( level );
+
+
+		elem.tooltip({html: true});
+	});
+
+
+	var skillsDetails = (function( hook, data ){
+		var self = {};
+		self.hook = hook;
+		self.data = data;
+
+		function renderGroup( name, skills ) {
+			return  '<div>' +
+					'<a class="quantico mt-2 mb-1" onclick="skillsDetails.controls.toggleSkillGroup(this);">' + name + '</a>' +
+					'<table class="skills-table collapse w-100 ml-2">' +
+					skills.sort( sort.byName ).reduce( renderRow, '' ) +
+					'</table>'
+					'</div>';
+		}
+		function renderRow( r, skill ){
+			return r + '' +
+					'<tr>' +
+					'<td>' +
+					skill.name +
+					'</td>' +
+					'<td class="skill skill-level-' + skill.level + '">' + skill.level + '</td>' +
+					'</tr>'
+		}
+
+		var publicFunctions;
+		publicFunctions = {
+			controls: {
+				toggleSkillGroup: function( elem ){
+					var target = $(elem).next()
+
+					target.toggle(
+						function(){ target.addClass('collapse.show'); },
+						function(){ toggleTarget.removeClass('collapse.show'); }
+					);
+				}
+			},
+			render: function( elem, data ){
+				if( !elem ) elem = self.hook;
+				if( !data ) data = self.data;
+
+				var r = ''
+
+				var groupOrder = [ 257,275,1216,1240,1210,1209,1213,255,256,273,272,1217,269,278,258,266,274,1220,268,270,1218,1241,1545 ];
+
+				for( var i = 0; i < groupOrder.length; i++ ) {
+					var groupID = groupOrder[i];
+					var group = (function(groupID){
+						return given.skillGroupIDs.filter(function( group ){
+							return group.id == groupID;
+						})[0];
+					})(groupID);
+
+					var groupSkills = (function(groupID){
+						return data.filter(function( skill ){
+							return skill.groupID == groupID;
+						});
+					})(groupID);
+
+
+
+					r += renderGroup( group.name, groupSkills );
+				}
+
+
+				if( elem ) elem.innerHTML = r;
+			}
+		}
+
+		return publicFunctions;
+	})( hooks.skillsDetails, store.skills );
+
+	$(function(){
+		skillsDetails.render( hooks.skillsDetails, store.skills );
+	})
+</script>
+<% include ../../partials/footer %>

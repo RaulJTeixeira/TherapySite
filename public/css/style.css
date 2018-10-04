@@ -1,0 +1,46 @@
+body {
+    padding-top: 75px;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+    background: #000000;
+    color: white;
+    font-family: 'Exo', sans-serif;
+    background: url("/images/bg/ss+(2017-07-13+at+12.38.43).png") fixed;
+}
+
+a {
+    color: #00B7FF;
+}
+nav.navbar {
+    background: url(/images/bg/dark-triangles.png);
+    border-bottom: 1px solid black;
+}
+
+.navbar-brand {
+    font-family: 'Exo', sans-serif;
+}
+
+
+.Khand {
+    font-family: 'Khand', sans-serif;
+}
+.Quantico {
+    font-family: 'Quantico', sans-serif;
+}
+
+.generate-columns(12);
+
+.generate-columns(@n, @i: 1) when (@i =< @n) {
+    .col-sm-@{i} {
+        padding: 15px;
+        background: rgba(0,0,0,.8);
+    }
+    .col-md-@{i} {
+        padding: 15px;
+        background: rgba(0,0,0,.8);
+    }
+    .col-lg-@{i} {
+        padding: 15px;
+        background: rgba(0,0,0,.8);
+    }
+    .generate-columns(@n, (@i + 1));
+}

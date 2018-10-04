@@ -1,0 +1,176 @@
+<% include ../../partials/header %>
+<style>
+	tr.npc-corporation td {
+		background: rgba(0,0,180,.2);
+	}
+	.character-description {
+		background: rgba(127,127,127,.1);
+		padding: 5px 10px;
+		height: 185px;
+		width: 100%;
+		overflow-y:scroll;
+	}
+	.character-description font {
+		font-size: 12px !important;
+	}
+	table.alts-table td {
+		vertical-align: middle;
+	}
+</style>
+<script>
+	var given = {
+		corpHistory: <%- JSON.stringify( corpHistory ) %>,
+		npcCorps: <%- JSON.stringify( npcCorps ) %>
+	};
+</script>
+	<% include ../../partials/dashboardIdent %>
+	<% include ../../partials/dashboardNav %>
+	<div class="container-fluid content mb-3">
+		<div class="row">
+			<div class="col">
+				<div class="d-flex justify-content-between align-items-end">
+					<h3>Corporation History</h3>
+					<label class="form-check-label mb-2">
+						<input class="form-check-input" type="checkbox" onchange="corpHistory.controls.showNPCCorps()">
+						show NPC Corps
+					</label>
+				</div>
+				<table class="table table-v-align-middle table-sm dashboard-table">
+					<thead>
+						<tr>
+							<th colspan="2">Alliance</th>
+							<th colspan="2">Corporation</th>
+							<th>Joined</th>
+							<th>Pilot Membership</th>
+						</tr>
+					</thead>
+					<tbody id="corp-history-hook"></tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+<script>
+	var store = {
+		corpHistory: []
+	};
+
+	var hooks = {
+		corpHistory: document.getElementById('corp-history-hook')
+	};
+
+	var sort = {
+		byName: function(a,b) { a=a.name.toLowerCase(); b=b.name.toLowerCase(); if( a > b )return 1; if( a < b ) return -1; return 0; }
+	};
+
+	(function initialize(){
+
+	    console.log("INIT corp history");
+        console.log("!!!!!!!!!!!!!!!!  !!!!!!!!!!!!!!!!!!!! >> " +  given.corpHistory.length);
+
+		for( let endDate = new Date(), i = 0, len = given.corpHistory.length; i < len; i++ ) {
+
+			let entry = given.corpHistory[i];
+            console.log("Creating entry for : "+ entry.corporation_name);
+
+			let startDate = new Date( entry.start_date );
+
+            let final_entry = {
+                "start_date": startDate,
+                "last_date": endDate,
+                "corporation_id": entry.corporation_id,
+                "record_id": entry.record_id,
+                "isNPC": given.npcCorps.indexOf( entry.corporation_id ) > -1,
+                "corporation_name": entry.corporation_name,
+                "corporation_name_complete": "[" + entry.corporation_ticker + "] " + entry.corporation_name
+            }
+
+            if(entry.alliance_id !== undefined){
+                final_entry.alliance_id = entry.alliance_id;
+                final_entry.alliance_name = entry.alliance_name;
+                final_entry.alliance_name_complete = "[" + entry.alliance_ticker + "] " + entry.alliance_name
+            }
+            store.corpHistory.push(final_entry);
+
+			endDate = new Date( entry.start_date );
+		}
+	})();
+
+
+	var corpHistory = (function( hook, data ){
+		var self = {};
+		self.hook = hook;
+		self.data = data;
+		self.showNPCCorps = false;
+
+		function renderTimeSpent( time ) {
+			var minutes = Math.floor( time / 60 );
+			var hours = Math.floor( minutes / 60 );
+			var days = Math.floor( hours / 24 );
+			var months = Math.floor( days / 30 );
+			var years = Math.floor( days / 365 );
+
+			if( years == 1 ) return years + ' year ' + ( months % 12 ) + ' months';
+			if( years ) return years + ' years ' + ( months % 12 ) + ' months';
+			if( months == 1 ) return months + ' month ' + ( days % 30 ) + ' days';
+			if( months ) return months + ' months ' + ( days % 30 ) + ' days';
+			if( days == 1 ) return days + ' day ' + ( hours % 24 ) + ' hours';
+			if( days ) return days + ' days ' + ( hours % 24 ) + ' hours';
+			if( hours ) return hours + ' hours ' + ( minutes % 60 ) + ' minutes';
+			if( minutes ) return minutes + ' minutes';
+			return 'No very long';
+		}
+
+		var _lastHistory;
+		function renderRow( r, history ) {
+			let timeSpent = Math.floor((history.last_date - history.start_date) / 1000);
+			let allianceTimeSpent = Math.floor((history.alliance_last_date - history.alliance_start_date) / 1000);
+
+			if( !self.showNPCCorps && history.isNPC )
+				return r;
+
+			let isNotLastHistory = !(_lastHistory && _lastHistory.corporation_id == history.corporation_id);
+
+			r += '<tr class="' + ((history.isNPC)?'npc-corporation':'') + ' ' + ((!self.showNPCCorps && history.isNPC)?'d-none':'') + '">' +
+					((history.alliance_id)?'<td class="sm p-0"><img src="//image.eveonline.com/Alliance/' + history.alliance_id + '_32.png"></td>' :'<td class="d-hidden"></td>') +
+					((history.alliance_id)?'<td><a target="_blank" href="http://evemaps.dotlan.net/alliance/' + history.alliance_id + '">' + history.alliance_name_complete + '</a></td>':'<td class="d-hidden"></td>') +
+					'<td class="sm"><img src="//image.eveonline.com/Corporation/' + history.corporation_id + '_32.png"></td>' +
+					'<td> <a target="_blank" href="http://evemaps.dotlan.net/corp/' + history.corporation_id + '">' + history.corporation_name_complete + ((history.isNPC)?' (NPC)':'') + '</a></td>' +
+					'<td>' + ((isNotLastHistory)? history.start_date.toLocaleDateString('en-US') + ' ' + history.start_date.toLocaleTimeString('en-US'):'') + '</td>' +
+					'<td>' + ((isNotLastHistory)? renderTimeSpent( timeSpent ):'') + '</td>' +
+					'</tr>';
+
+			_lastHistory = history;
+
+			return r;
+		}
+
+		var publicFunctions;
+		publicFunctions = {
+			controls: {
+				showNPCCorps: function(){
+					self.showNPCCorps = !self.showNPCCorps;
+
+					publicFunctions.render();
+				}
+			},
+			render: function( elem, data ){
+				if( !elem ) elem = self.hook;
+				if( !data ) data = self.data;
+
+				var r = ''
+
+				r += data.reduce( renderRow, '' );
+
+				if( elem ) elem.innerHTML = r;
+			}
+		}
+
+		return publicFunctions;
+	})( hooks.corpHistory, store.corpHistory );
+
+
+	$(function(){
+		corpHistory.render( hooks.corpHistory, store.corpHistory );
+	})
+</script>
+<% include ../../partials/footer %>

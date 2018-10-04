@@ -1,0 +1,28 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'C:\\Program Files\\nodejs\\node.exe',
+1 verbose cli   'C:\\ProgramData\\chocolatey\\lib\\npm\\tools\\node_modules\\npm\\bin\\npm-cli.js',
+1 verbose cli   'start' ]
+2 info using npm@1.4.9
+3 info using node@v10.11.0
+4 verbose run-script [ 'prestart', 'start', 'poststart' ]
+5 info prestart TherapyTool@0.0.0
+6 info start TherapyTool@0.0.0
+7 verbose unsafe-perm in lifecycle true
+8 info TherapyTool@0.0.0 Failed to exec start script
+9 error TherapyTool@0.0.0 start: `node ./bin/www`
+9 error Exit status 1
+10 error Failed at the TherapyTool@0.0.0 start script.
+10 error This is most likely a problem with the TherapyTool package,
+10 error not with npm itself.
+10 error Tell the author that this fails on your system:
+10 error     node ./bin/www
+10 error You can get their info via:
+10 error     npm owner ls TherapyTool
+10 error There is likely additional logging output above.
+11 error System Windows_NT 10.0.17134
+12 error command "C:\\Program Files\\nodejs\\node.exe" "C:\\ProgramData\\chocolatey\\lib\\npm\\tools\\node_modules\\npm\\bin\\npm-cli.js" "start"
+13 error cwd D:\TherapyTool
+14 error node -v v10.11.0
+15 error npm -v 1.4.9
+16 error code ELIFECYCLE
+17 verbose exit [ 1, true ]

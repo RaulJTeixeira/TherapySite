@@ -1,0 +1,121 @@
+<% function pageIsActive(page, path){
+	if( page == path )
+		return 'active';
+} %>
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Therapy.</title>
+	<link rel="apple-touch-icon" sizes="57x57" href="/images/icon/apple-icon-57x57.png">
+	<link rel="apple-touch-icon" sizes="60x60" href="/images/icon/apple-icon-60x60.png">
+	<link rel="apple-touch-icon" sizes="72x72" href="/images/icon/apple-icon-72x72.png">
+	<link rel="apple-touch-icon" sizes="76x76" href="/images/icon/apple-icon-76x76.png">
+	<link rel="apple-touch-icon" sizes="114x114" href="/images/icon/apple-icon-114x114.png">
+	<link rel="apple-touch-icon" sizes="120x120" href="/images/icon/apple-icon-120x120.png">
+	<link rel="apple-touch-icon" sizes="144x144" href="/images/icon/apple-icon-144x144.png">
+	<link rel="apple-touch-icon" sizes="152x152" href="/images/icon/apple-icon-152x152.png">
+	<link rel="apple-touch-icon" sizes="180x180" href="/images/icon/apple-icon-180x180.png">
+	<link rel="icon" type="image/png" sizes="192x192"  href="/images/icon/android-icon-192x192.png">
+	<link rel="icon" type="image/png" sizes="32x32" href="/images/icon/favicon-32x32.png">
+	<link rel="icon" type="image/png" sizes="96x96" href="/images/icon/favicon-96x96.png">
+	<link rel="icon" type="image/png" sizes="16x16" href="/images/icon/favicon-16x16.png">
+	<link rel="manifest" href="/images/icon/manifest.json">
+	<meta name="msapplication-TileColor" content="#001bb0">
+	<meta name="msapplication-TileImage" content="/images/icon/ms-icon-144x144.png">
+	<meta name="theme-color" content="#001bb0">
+
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.6.0/Sortable.min.js" integrity="sha256-ncVUo40HSaxFORNNlffKfkkhbsUHNLAzQ2SFlRUw7gA=" crossorigin="anonymous"></script>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.js" integrity="sha256-CMMTrj5gGwOAXBeFi7kNokqowkzbeL8ydAJy39ewjkQ=" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/vuex/3.0.1/vuex.js" integrity="sha256-l3CrEMpLNl0avnW4yLIiCSlH0HdFPtOd5ozMIk+0550=" crossorigin="anonymous"></script>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Vue.Draggable/15.0.0/vuedraggable.min.js" integrity="sha256-kZmY4LUwE53ceTqZXPto8gMELhExZWBrmzOCZgzyY0Y=" crossorigin="anonymous"></script>
+
+	<link href="https://fonts.googleapis.com/css?family=Exo|Quantico" rel="stylesheet">
+	<link rel="stylesheet" href="<%= locals.assetFingerprint('/css/style.min.css') %>">
+	<script>
+	</script>
+</head>
+<body>
+	<nav class="navbar navbar-expand-md navbar-dark fixed-top">
+		<a class="navbar-brand" href="/"><img src="/images/Therapy._64.png" style="width:32px"> [SH0K] <strong>Therapy.</strong></a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<div class="collapse navbar-collapse" id="navbarsExampleDefault">
+			<ul class="navbar-nav mr-auto">
+				<% if( locals.session && session.user ) { %>
+				<% for(var name in locals.headerURLs ) {
+					var navItem = locals.headerURLs[ name ];
+				%>
+					<% if( !navItem.children ) { %>
+						<li class="nav-item">
+							<a class="nav-link <%= pageIsActive(navItem.url, path) %>" href="<%= navItem.url %>"><%= name %></a>
+						</li>
+					<% } else { %>
+						<li class="nav-item dropdown">
+							<a class="nav-link dropdown-toggle" href="<%= navItem.url %>" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+								<%= name %>
+							</a>
+							<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+								<% for(var i = 0; i < navItem.children.length; i++ ) {
+									var child = navItem.children[i];
+								%>
+								<a class="dropdown-item" href="<%= navItem.url + child.url %>"><%= child.name %></a>
+								<% } %>
+							</div>
+						</li>
+					<% } %>
+				<% } %>
+				<% } %>
+			</ul>
+			<ul class="navbar-nav">
+			<% if( locals.session && session.user ) { %>
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Welcome <%= session.user.CharacterName %>
+					</a>
+					<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+						<a class="dropdown-item" href="/logout">Logout</a>
+					</div>
+				</li>
+			<% } else { %>
+				<% if(locals.loginURL) { %>
+				<a href="<%= loginURL  %>">
+					<img src="https://images.contentful.com/idjq7aai9ylm/12vrPsIMBQi28QwCGOAqGk/33234da7672c6b0cdca394fc8e0b1c2b/EVE_SSO_Login_Buttons_Small_Black.png?w=195&h=30">
+				</a>
+				<% } %>
+			<% } %>
+			</ul>
+		</div>
+	</nav>
+	<main>
+	<% if( messages && messages.info ) { %>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col no-padding">
+				<div class="alert" style="background: rgba(0, 77, 0, 0.8); border: 1px solid rgba(0,170,0,.9);" role="alert">
+					<%= messages.info %>
+				</div>
+			</div>
+		</div>
+	</div>
+	<% } %>
+	<% if( messages && messages.warning ) { %>
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col no-padding">
+				<div class="alert" style="background: rgba(77, 0, 0, 0.8); border: 1px solid rgba(170, 0,0,.9);" role="alert">
+					<%= messages.warning %>
+				</div>
+			</div>
+		</div>
+	</div>
+	<% } %>

@@ -1,0 +1,213 @@
+<% include ../../partials/header %>
+<script>
+	let store = {};
+	let hooks = {};
+	let sort = {
+		by: function( attr, direction ) {
+			if( direction.toLowerCase() === 'asc' ) direction = 1;
+			if( direction.toLowerCase() === 'desc' ) direction = -1;
+
+			let parts = attr.split(' ')
+
+			return function( a, b ) {
+				for( let i = 0, len = parts.length; i < len; i++ ) {
+					let ap = parts[i];
+					let c=a[ap].toLowerCase(), d=b[ap].toLowerCase();
+					if( c > d ) return direction;
+					if( c < d ) return direction;
+				}
+				return 0;
+			}
+		}
+	};
+	sort.byName = function(a,b) { a=a.name.toLowerCase(); b=b.name.toLowerCase(); if( a > b )return 1; if( a < b ) return -1; return 0; };
+	sort.bycharacter_name = function(a,b) { a=a.character_name.toLowerCase(); b=b.character_name.toLowerCase(); if( a > b )return 1; if( a < b ) return -1; return 0; };
+	sort.byCharacterName = function(a,b) { a=a.CharacterName.toLowerCase(); b=b.CharacterName.toLowerCase(); if( a > b )return 1; if( a < b ) return -1; return 0; };
+
+	function grep( arr, attr, id ) {
+		for( let i = arr.length; i --> 0; )
+			if( arr[ i ][ attr ] == id ) {
+				arr.splice( i, 1 );
+				break;
+			}
+	}
+
+	function dictionary( store, name, arr, attr, callback ) {
+		store.dictionary[name] = (store.dictionary[name])?store.dictionary[name]:{};
+
+		for( let i = arr.length; i --> 0; ) {
+			let doc = arr[i];
+
+			callback && callback( doc );
+
+			store.dictionary[name][ doc[attr] ] = doc;
+		}
+	}
+	const MONTH_DESCRIPTION = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+</script>
+<script>
+	let given = {
+		pilots: <%- JSON.stringify(pilots) %>,
+		permissionGroups: <%- JSON.stringify(permissionGroups) %>
+	};
+</script>
+<style>
+	.group-container {
+		margin-bottom: 5px;
+		border: 1px solid rgba(65, 65, 65, 0.5);
+	}
+	.group-container-top {
+		padding: 10px 10px 5px 10px;
+		border-bottom: 1px solid rgba(65, 65, 65, 0.5);
+	}
+	.group-container-content {
+		padding: 5px 10px 10px 10px;
+	}
+	.drag-area {
+		padding: 3px;
+		border: 1px solid rgba(65, 65, 65, 0.5);
+	}
+	.bullet {
+		background: rgba(127, 127, 127, 0.1);
+		border: 1px solid rgba(65, 65, 65, 0.5);
+		cursor: move;
+	}
+	.bullet:not(:last-of-type) {
+		margin-bottom: 3px;
+	}
+	.permissions-bullet {
+		padding: 5px;
+	}
+	.user-bullet {
+		background: rgba(127, 127, 127, 0.1);
+		border: 1px solid rgba(65, 65, 65, 0.5);
+		padding: 5px;
+	}
+</style>
+<div id="app" class="container content" v-cloak>
+	<div class="row">
+		<div class="col">
+			<h1>Group Permission Management</h1>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<form @submit.prevent="handleSubmit">
+			<table class="table table-sm table-v-align-middle">
+				<tr>
+					<td>
+						<input class="form-control" type="text" placeholder="Add Group to listing" v-model="store.groupName">
+					</td>
+					<td class="sm">
+						<button class="btn btn-sm btn-dark m-1" v-on:click="addGroup">Add</button>
+					</td>
+				</tr>
+			</table>
+			</form>
+			<template v-for="(group, groupIndex) in store.groups">
+				<div class="group-container">
+					<div class="group-container-top d-flex align-items-center justify-content-between">
+						<h2 class="m-0">{{group.name}}</h2>
+						<button class="btn btn-sm btn-dark" style="padding: 0 .25em" @click="deleteGroup( groupIndex )">Delete</button>
+					</div>
+					<div class="group-container-content d-flex">
+						<div style="width: 50%">
+							<h5 class="mb-1">Pilots</h5>
+							<div class="drag-area mr-2">
+								<draggable :list="group.pilots" :options="{group:'pilots'}"  style="min-height: 20px;">
+									<div class="bullet user-bullet" v-for="(pilot, index) in group.pilots">
+										{{pilot.CharacterName}}
+									</div>
+								</draggable>
+							</div>
+						</div>
+						<div style="width: 50%">
+							<h5 class="mb-1">Permissions</h5>
+							<div class="drag-area">
+								<draggable :list="group.permissions" :options="{group:'permissions'}"  style="min-height: 20px;">
+									<template v-for="permissions in group.permissions">
+										<div class="bullet permissions-bullet">{{permissions}}</div>
+									</template>
+								</draggable>
+							</div>
+						</div>
+					</div>
+				</div>
+			</template>
+		</div>
+		<div class="col-md-3">
+			<h3>Accounts</h3>
+			<draggable v-model="store.pilots" :options="{group: { name: 'pilots', pull:'clone', put:false}, sort: false}">
+				<template v-for="pilot in store.pilots">
+					<div class="bullet user-bullet" :key="pilot.CharacterID">{{pilot.CharacterName}}</div>
+				</template>
+			</draggable>
+		</div>
+		<div class="col-md-3">
+			<h3>Permissions</h3>
+			<draggable v-model="store.permissions" :options="{group: { name: 'permissions', pull:'clone', put:false}, sort: false}">
+				<template v-for="permissions in store.permissions">
+					<div class="bullet permissions-bullet">{{permissions}}</div>
+				</template>
+			</draggable>
+		</div>
+	</div>
+	<div class="row">
+	</div>
+</div>
+<script>
+	store.groupName = '';
+	store.pilots = given.pilots.sort(sort.byCharacterName);
+	store.addGroup = function(){
+		// callback to the server
+		// Good
+		// Bad
+		if( store.groupName.length === 0 )
+			return;
+
+		store.groups.push({
+			name: store.groupName,
+			pilots: [],
+			permissions: []
+		});
+
+		store.groups.sort(sort.byName);
+
+		store.groupName = "";
+	};
+	store.groups = given.permissionGroups.sort(sort.byName);
+	store.groups = [{ name: "Admins", pilots: [], permissions: [] }];
+	store.permissions = ['Dashboard','Krabacus'].sort();
+
+	(function initialize(){
+
+	})();
+
+	let id = 0;
+
+	window.onload = function() {
+		new Vue({
+			el: '#app',
+			data: {
+				store: store
+			},
+			methods: {
+				addGroup: store.addGroup,
+				deleteGroup: function( id ) {
+					if( !confirm("Are you sure you want to delete this group?") )
+						return ;
+
+
+					if( store.groups.length == 0 )
+						return;
+					store.groups.splice( id, 1 );
+				},
+				handleSubmit: function() {
+					this.addGroup();
+				}
+			}
+		});
+	};
+
+</script>
+<% include ../../partials/footer %>

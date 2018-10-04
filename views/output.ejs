@@ -1,0 +1,9 @@
+<% if( locals.output && (locals.clean || locals.query && locals.query.clean) ) { %>
+	<pre><%= JSON.stringify(output, null, 4) %></pre>
+<% } else if( locals.output ) { %>
+	<%= JSON.stringify(output) %>
+<% } else if( locals.clean || locals.query && locals.query.clean ) { %>
+	<pre><%= JSON.stringify(locals, null, 4) %></pre>
+<% } else { %>
+	<%= JSON.stringify(locals) %>
+<% } %>

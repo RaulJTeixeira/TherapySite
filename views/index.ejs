@@ -1,0 +1,269 @@
+<% include ../partials/front-header %>
+<style>
+	.video-background {
+		background: #000;
+		position: fixed;
+		top: 0; right: 0; bottom: 0; left: 0;
+		z-index: -99;
+	}
+	.video-foreground,
+	.video-background iframe {
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		pointer-events: none;
+	}
+	.content {
+		background: url("/images/bg/dark-triangles-a.png");
+	}
+	.btn-dark {
+		border: 0;
+	}
+	input[type="range"] {
+		-webkit-appearance: none !important; /*Needed to reset default slider styles */
+		width : 100%;
+		height: 5px;
+		background : #000012;
+		color : #000037;
+		border : 0;
+		border-radius: 10px;
+		margin : auto;
+	}
+	input[type="range"]:hover {
+		background-color: #000037;
+	}
+	 input[type="range"]::-webkit-slider-thumb {
+		 -webkit-appearance: none !important;
+		 width: 20px;
+		 height: 20px;
+		 background: #343a40;
+		 color: white;
+		 border: 0;
+		 border-radius: 30px;
+	 }
+	input[type="range"]::-webkit-slider-thumb:hover {
+		background: #23272b;
+	}
+	.btn-auth:hover,.btn-auth:not([disabled]):not(.disabled):active {
+		background-size: cover;
+		background: url("/images/bg/ezgif-5-9633132079.gif") no-repeat center center;
+	}
+	.btn-forum:hover,.btn-forum:not([disabled]):not(.disabled):active {
+		background-size: cover;
+		background: url("/images/bg/GIF_EVE_shipAd_brutix.gif") no-repeat center center;
+	}
+	.btn-kill:hover,.btn-kill:not([disabled]):not(.disabled):active {
+		background-size: cover;
+		background: url("/images/bg/FleetFaceoff.gif") no-repeat center center;
+	}
+	.btn.activated {
+		background: #0000ff;
+	}
+</style>
+<script async src="https://www.youtube.com/iframe_api"></script>
+<script>
+	let player;
+	let playerState;
+	function onYouTubeIframeAPIReady() {
+		player = new YT.Player('muteYouTubeVideoPlayer', {
+			width: 560,               // Player width (in px)
+			height: 316,              // Player height (in px)
+			playerVars: {
+				listType: 'playlist',
+				list: 'PLxPfxB4EOIbHRP8HF2YEQp6s7Nuc8HGuI',
+				autoplay: 1,        // Auto-play the video on load
+				controls: 0,        // Show pause/play buttons in player
+				showinfo: 0,        // Hide the video title
+				modestbranding: 1,  // Hide the Youtube Logo
+				loop: 1,            // Run the video in a loop
+				fs: 0,              // Hide the full screen button
+				rel: 0,				// Related videos
+				cc_load_policy: 0, 	// Hide closed captions
+				iv_load_policy: 3,  // Hide the Video Annotations
+				autohide: 0         // Hide video controls when playing
+			},
+			events: {
+				onReady: function(e) {
+					let volume = ( 0 + getCookie('playerVolume') );
+					console.log( volume );
+					if( getCookie('playerVolume') == "" )
+						setVolume( 50 );
+					else
+						setVolume( volume );
+
+					if( getCookie("mutePlayer") == "1" )
+						muteVolume(); // This is a toggle
+				},
+				'onStateChange': function onPlayerStateChange(state) {
+					playerState = state.data;
+				}
+			}
+		});
+	}
+	function setVolumeNoCookie( value ) {
+		document.getElementById('rangeInput').value = value;
+		document.getElementById('rangevalue').value = value;
+		player.setVolume( value );
+	}
+	function setVolume( value ) {
+		setVolumeNoCookie( value );
+		document.cookie = "playerVolume=" + value;
+	}
+	function muteVolume( mute ) {
+		if( player.isMuted() || ( mute !== undefined && mute === false ) ) {
+			$('#mute-button').removeClass('activated')
+			document.cookie = "mutePlayer=" + 0;
+			player.unMute();
+			let volume = ( + getCookie('playerVolume') );
+			setVolumeNoCookie( volume );
+		} else {
+			$('#mute-button').addClass('activated');
+			document.cookie = "mutePlayer=" + 1;
+			player.mute();
+			setVolumeNoCookie( 0 );
+		}
+	}
+
+	function getCookie(cname) {
+		var name = cname + "=";
+		var decodedCookie = decodeURIComponent(document.cookie);
+		var ca = decodedCookie.split(';');
+		for(var i = 0; i <ca.length; i++) {
+			var c = ca[i];
+			while (c.charAt(0) == ' ') {
+				c = c.substring(1);
+			}
+			if (c.indexOf(name) == 0) {
+				return c.substring(name.length, c.length);
+			}
+		}
+		return "";
+	}
+
+	function muteButton() {
+		muteVolume();
+	}
+
+	function changeVolume(e) {
+		player.unMute();
+		player.setVolume( e.value );
+		document.cookie = "mutePlayer=" + 0;
+		document.cookie = "playerVolume=" + e.value;
+	}
+	function next() {
+		player.nextVideo()
+	}
+	function playPause(e) {
+		if( playerState == 1 ) {
+			$('#play-pause').addClass('activated');
+			e.innerHTML = '&#x21E8';
+			player.pauseVideo();
+		} else {
+			$('#play-pause').removeClass('activated');
+			e.innerHTML = '&#9612;&#9612;';
+			player.playVideo();
+		}
+	}
+
+
+</script>
+<div class="video-background">
+	<div class="video-foreground">
+		<div id="muteYouTubeVideoPlayer"></div>
+	</div>
+</div>
+<div class="d-flex align-items-center" style="position: absolute; top: 10px; right: 10px; z-index: 99;">
+	<output id="rangevalue" class="mr-1"></output>
+	<input id="rangeInput" type="range" min="0" max="100" value="0" class="slider-square mr-1" oninput="changeVolume(this);rangevalue.value=value">
+	<button id="play-pause" class="btn btn-dark text-center ml-1" style="min-width: 50px;" onclick="playPause(this)">&#9612;&#9612;</button>
+	<button class="btn btn-dark ml-1" onclick="next()">&#x21E5;</button>
+	<button id="mute-button" class="btn btn-dark ml-1" onclick="muteButton()">Mute</button>
+</div>
+<main>
+	<div class="container-fluid">
+		<div class="row align-items-stretch">
+			<div class="col-lg-8 col-xl-9 mb-3"></div>
+			<div class="col-md-12 col-lg-4 col-xl-3" style="margin-top: calc(100vh - 700px);">
+				<div class="content" data-aos="fade-left" data-aos-once="true" data-aos-duration="600" data-aos-anchor="main">
+					<div class="pb-2">
+						<a class="navbar-brand normal-anchor" href="/" style="font-size: 24px;"><img src="/images/Therapy._64.png" style="width:32px"> [SH0K] <strong>Therapy.</strong></a>
+					</div>
+					<% if( messages && messages.info ) { %>
+					<div class="alert" style="background: rgba(0, 77, 0, 0.8); border: 1px solid rgba(0,170,0,.9);" role="alert">
+						<%= messages.info %>
+					</div>
+					<% } %>
+					<% if( messages && messages.warning ) { %>
+					<div class="alert" style="background: rgba(77, 0, 0, 0.8); border: 1px solid rgba(170, 0,0,.9);" role="alert">
+						<%= messages.warning %>
+					</div>
+					<% } %>
+					<% if( locals.user && user.CharacterName ) { %>
+						Logged in as: <a href="/dashboard"><%= user.CharacterName %></a>
+					<% } %>
+					<div class="p-1">
+						<a class="btn btn-auth btn-dark w-100" href="<%= loginURL  %>">Dashboard</a>
+					</div>
+					<div class="p-1">
+						<a class="btn btn-forum btn-dark w-100" href="<%= forumURL  %>">Forums</a>
+					</div>
+					<div class="p-1">
+						<a class="btn btn-kill btn-dark w-100"  href="https://zkillboard.com/corporation/439896599/" target="_blank">Killboard</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</main>
+<div class="container mb-5">
+	<div class="row justify-content-center">
+		<div id="join" class="content mb-5" data-aos="fade-up" data-aos-once="true" data-aos-anchor="main" data-aos-delay="500" data-aos-duration="600">
+			<h3 class="text-center pb-3"><a class="normal-anchor" data-scroll href="#join">&#x21C3; How do I join? &#x21C2;</a></h3>
+			<div class="container-fluid">
+				<div class="row">
+					<div class="col-sm text-center">
+						<a class="btn btn-sm btn-discord mb-3" href="//discord.gg/SNZNMvk">
+							<img src="images/discord_white.svg"> Our Discord
+						</a>
+						<p>Join discord and give us a shout in the lobby</p>
+					</div>
+					<div class="col-sm-1 text-center" style="justify-content: center;font-size:20px;"><table style="width: 100%; height: 100%"><tr><td> or </td></tr></table></div>
+					<div class="col-sm text-center">
+						<img id="eve-svg" class="mb-3" src="images/EVE_online_logo.svg" style="height:45px">
+						<p>Join Channel: Therapy Public</p>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="content" style="padding: 30px" data-aos="fade-up" data-aos-once="true" data-aos-duration="600">
+			<h4>What we look for</h4>
+			<ul>
+				<li>
+					Duders who are looking to be part of a <em>community</em>. A desire to undock together to either go to glory or
+					drunken Failures.
+				</li>
+				<li>Industrialists who want to work as a team to complete Goals/Projects!</li>
+				<li>Mumble and Jabber Usage</li>
+				<li>Euro/US</li>
+				<li>5M skill points minimum.</li>
+
+			</ul>
+			<h4>The Perks</h4>
+			<ul>
+				<li>Relaxed Environment/Atmosphere</li>
+				<li>Corp Citadels rigged for all money making needs</li>
+				<li>Community Feel. ( Inside Eve and in other games)</li>
+				<li>SRP (subs and Caps)</li>
+				<li>Small to Large Scale Fleet Engagements</li>
+				<li>Experienced Leadership</li>
+				<li>Experienced FCs</li>
+				<li>Primo hunting Grounds</li>
+				<li>Many Money Making Opportunity( Ratting,PI,Market Champions,ect)</li>
+				<li>An environment for you to become a better pilot, not simply get lost in the Numbers.</li>
+			</ul>
+		</div>
+	</div>
+</div>
+<% include ../partials/footer %>

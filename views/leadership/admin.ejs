@@ -1,0 +1,89 @@
+<% include ../../partials/header %>
+<script>
+	let store = {};
+	let hooks = {};
+	let sort = {
+		by: function( attr, direction ) {
+			if( direction.toLowerCase() === 'asc' ) direction = 1;
+			if( direction.toLowerCase() === 'desc' ) direction = -1;
+
+			let parts = attr.split(' ')
+
+			return function( a, b ) {
+				for( let i = 0, len = parts.length; i < len; i++ ) {
+					let ap = parts[i];
+					let c=a[ap].toLowerCase(), d=b[ap].toLowerCase();
+					if( c > d ) return direction;
+					if( c < d ) return direction;
+				}
+				return 0;
+			}
+		}
+	};
+	sort.byName = function(a,b) { a=a.name.toLowerCase(); b=b.name.toLowerCase(); if( a > b )return 1; if( a < b ) return -1; return 0; };
+	sort.bycharacter_name = function(a,b) { a=a.character_name.toLowerCase(); b=b.character_name.toLowerCase(); if( a > b )return 1; if( a < b ) return -1; return 0; };
+
+	const enum_rockType = Object.freeze ({
+		ore: 0,
+		ice: 1,
+		moon: 2,
+		unknown: 3
+	});
+
+	function grep( arr, attr, id ) {
+		for( let i = arr.length; i --> 0; )
+			if( arr[ i ][ attr ] == id ) {
+				arr.splice( i, 1 );
+				break;
+			}
+	}
+
+	function dictionary( store, name, arr, attr, callback ) {
+		store.dictionary[name] = (store.dictionary[name])?store.dictionary[name]:{};
+
+		for( let i = arr.length; i --> 0; ) {
+			let doc = arr[i];
+
+			callback && callback( doc );
+
+			store.dictionary[name][ doc[attr] ] = doc;
+		}
+	}
+	const MONTH_DESCRIPTION = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+	let iskOptions = { minimumFractionDigits: 0, maximumFractionDigits: 0 };
+	function rISK( n ) {
+		return Number( n ).toLocaleString( undefined, iskOptions );
+	}
+</script>
+<script>
+	let given = {
+	};
+</script>
+<div id="app" class="container content">
+	<div class="row" v-cloak>
+		<div class="col-sm-12 col-md">
+		</div>
+	</div>
+</div>
+<script>
+	store.options = {};
+
+
+	(function initialize(){
+	})();
+
+	new Vue({
+		el: '#app',
+		data: {
+			sort: sort,
+			store: store
+		},
+		computed: {
+		},
+		methods: {
+		}
+	});
+
+</script>
+<% include ../../partials/footer %>

@@ -1,0 +1,290 @@
+<% include ../../partials/header %>
+<style>
+	.table .space-1 td {
+		background: rgba(0,0,0,.3);
+	}
+	.table .space-2 td {
+		background: rgba(127,127,127,.1);
+	}
+	.table .space-1 img {
+
+	}
+	.table .space-2 img {
+		margin-left: 32px;
+	}
+	.item-wrapper {
+		padding: 4px;
+		overflow: hidden;
+		flex-shrink: 0;
+		display: inline-flex;
+	}
+	.item-wrapper:hover {
+		background: rgba(256,256,256,.05);
+	}
+	.item {
+		position: relative;
+		width: 64px;
+		height: 92px;
+	}
+	.item .name {
+		font-size: 10px;
+		text-align: center;
+	}
+	.item-outline {
+		border: 1px solid rgba(256,256,256,.1);
+	}
+	.item-outline img {
+		margin: -1px;
+	}
+</style>
+	<% include ../../partials/dashboardIdent %>
+	<% include ../../partials/dashboardNav %>
+
+	<div class="container-fluid mb-3">
+		<div class="row">
+			<div class="col-xs-12 col-md-3 col-lg-2">
+				<div class="content">
+					<h4>Assets</h4>
+					<div>
+						<select onchange="assets.controls.filterTypes(this)">
+							<option value="All">All Asset Types</option>
+							<option value="materialTypes">Materials</option>
+							<option value="shipTypes">Ships</option>
+							<option value="ammoTypes">Ammo</option>
+							<option value="corpseTypes">Corpses</option>
+						</select>
+					</div>
+					<div>
+						<input type="checkbox" id="hideNoobShips" name="hideNoobShips" onchange="assets.controls.toggleFilter('showNoobShips')">
+						<label for="hideNoobShips">Hide noob ships?</label>
+					</div>
+					<div>
+						<input type="checkbox" id="hideContainers" name="showContainers" onchange="assets.controls.toggleFilter('showContents')">
+						<label for="showContainers">Hide container contents?</label>
+					</div>
+				</div>
+			</div>
+			<div class="col-xs-12 col-md-9 col-lg-10">
+				<div class="content" id="asset-hooker"></div>
+			</div>
+		</div>
+	</div>
+<script>
+	let given = {
+		assets: <%- JSON.stringify(locals.assets) %>,
+		locations: <%- JSON.stringify(locals.locations) %>,
+		ids: <%- JSON.stringify(locals.ids) %>
+	}
+	let store = {
+		assets: [],
+		locations: []
+	};
+
+	let hooks = {
+		assets: document.getElementById('asset-hooker')
+	};
+
+	let sort = {
+		byName: function(a,b) { a=a.name.toLowerCase(); b=b.name.toLowerCase(); if( a > b )return 1; if( a < b ) return -1; return 0; }
+	};
+
+
+	let dataLists = {
+		corpseTypes: given.ids.corpses,
+		shipTypes: given.ids.ships,
+		ammoTypes: given.ids.ammo,
+		materialTypes: given.ids.materials
+	}
+
+	let locationMap = new Map();
+	let _mysteryLocations = [];
+	(function initialize(){
+
+		// Generate the Map
+		for( let i = 0; i < given.locations.length; i++ ) {
+			let location = given.locations[i];
+			location.assets = [];
+			locationMap.set( +location.id, location);
+		}
+		store.locations = Array.from(locationMap.values());
+
+
+		// Map the assets to the location
+		for( let i = 0; i < given.assets.length; i++ ) {
+			let asset = given.assets[i];
+			store.assets.push( asset );
+			asset.show = true;
+
+			let location = locationMap.get( +asset.location_id );
+			if( location )
+				location.assets.push( asset );
+			else if( asset.location_type == "other" ) {
+				let asset_location = given.assets.filter(a=>a.item_id === +asset.location_id);
+
+				if( asset_location.length ) { // If the location is an asset (IE: ships)
+					if( !asset_location[0].assets )
+						asset_location[0].assets = [];
+					asset_location[0].assets.push( asset );
+				} else { // Donno
+					_mysteryLocations.push( +asset.location_id );
+					console.log( "Missing location:", asset);
+					let location = { id: +asset.location_id, name: 'ZZ_Unknown ' + asset.location_flag, assets: [] };
+					locationMap.set( +asset.location_id, location );
+
+					store.locations.push( location );
+				}
+
+			} else {
+				console.log( asset );
+				console.log("Missing location", asset.location_id);
+			}
+		}
+	})();
+
+
+	let activeFilters = {
+		showNoobShips: true,
+		showContents: true,
+		types: undefined
+	};
+	let assets = (function( hook, data ){
+		let self = {};
+		self.hook = hook;
+		self.data = data;
+
+		let _depth = 0;
+
+		function renderItem( r, item ) {
+            if( item.show ) {
+                r += '' +
+                    '<div class="item-wrapper">' +
+                    	'<div class="item">' +
+							'<div class="item-outline">' +
+								'<img src="https://imageserver.eveonline.com/Type/' + item.type_id + '_64.png" alt="' + item.type_name + '">' +
+							'</div>' +
+							'<div class="name">' +
+                    		((item.name && item.name !== "None") ? item.name + ' - <span class="text-muted">' + item.type_name + '</span>' : item.type_name) +
+							'</div>' +
+						'</div>' +
+                    '</div>';
+
+                if (activeFilters.showContents && item.assets && item.assets.length) {
+                    //r += item.assets.reduce(renderRow, '');
+                }
+            }
+
+            return r;
+		}
+
+		function renderRow( r, item ) {
+			_depth++;
+
+
+			if( item.show ) {
+				r += '' +
+						'<tr class="space-' + _depth + '">' +
+						'<td class="p-0 pl-3">' +
+						'<img src="https://imageserver.eveonline.com/Type/' + item.type_id + '_64.png" alt="' + item.type_name + '">' +
+						((item.name && item.name !== "None") ? item.name + ' - <span class="text-muted">' + item.type_name + '</span>' : item.type_name) +
+						'</td>' +
+						'<td>' + item.quantity + '</td>';
+				r += '</tr>';
+
+				if (activeFilters.showContents && item.assets && item.assets.length) {
+					r += item.assets.reduce(renderRow, '');
+				}
+			}
+
+			_depth--;
+			return r;
+		}
+
+		function assetFilter(a) {
+			let ignore = (!activeFilters.showNoobShips && given.ids.noobShips.indexOf( a.type_id ) > -1);
+
+			if( !ignore ) {
+				let matchesType = !activeFilters.types || activeFilters.types.indexOf(a.type_id) > -1;
+				let childrenMatch = false;
+
+				if(a.assets) {
+					if (matchesType && activeFilters.showContents) {
+						a.assets.map(a=>a.show = true);
+					} else {
+						childrenMatch = a.assets.filter(assetFilter).length > 0;
+					}
+				}
+				return a.show = matchesType || childrenMatch;
+			}
+
+			return a.show = false;
+		}
+		function countAssets( r, a ) {
+			if( activeFilters.showContents && a.assets && a.assets.length ) {
+				return a.assets.reduce( countAssets, r + a.show )
+			}
+			return r + a.show;
+		}
+
+		function filter( location ) {
+			let filteredAssets = location.assets.filter( assetFilter );
+			location.count = filteredAssets.reduce( countAssets, 0 );
+			return filteredAssets.length > 0;
+		}
+
+		let publicFunctions;
+		publicFunctions = {
+			controls: {
+				toggleFilter: function(filterName) {
+					activeFilters[ filterName ] = !activeFilters[ filterName ];
+
+					assets.render( hooks.assets, store.locations );
+				},
+				filterTypes: function( elem ) {
+					activeFilters.types = dataLists[elem.value];
+
+					assets.render( hooks.assets, store.locations );
+				}
+			},
+			render: function( elem, data ){
+				if( !elem ) elem = self.hook;
+				if( !data ) data = self.data;
+
+				let r = ''
+
+				console.log('render');
+
+				r += data
+						.filter( filter )
+						.sort((a,b)=>{
+							a= a.name.toLowerCase();b= b.name.toLowerCase();
+							if(a > b) return 1;
+							if(a < b) return -1;
+							return 0;
+						})
+						.reduce((r,l)=>{
+
+				    		console.log(l);
+
+							return r +
+									'<div>' +
+										'<h5>' + l.name + ' ' + l.count + ' items</h5>' +
+										'<div class="item-container d-flex flex-wrap w-100">' +
+											l.assets.reduce(renderItem,'') +
+										'</div>' +
+									'</div>';
+						},r);
+
+				if( elem ) elem.innerHTML = r;
+			}
+		}
+
+		return publicFunctions;
+	})( hooks.assets, store.assets );
+
+
+	$(function(){
+
+		assets.render( hooks.assets, store.locations );
+	})
+</script>
+<% include ../../partials/footer %>

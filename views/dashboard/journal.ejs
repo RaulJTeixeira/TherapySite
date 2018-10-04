@@ -1,0 +1,131 @@
+<% include ../../partials/header %>
+<style>
+	.balance-positive {
+		color: #00ff00;
+	}
+	.balance-negative {
+		color: #ff0000;
+	}
+	.isBuy {
+		background: rgba(127,0,0,.2);
+	}
+</style>
+	<% include ../../partials/dashboardIdent %>
+	<% include ../../partials/dashboardNav %>
+	<div class="container-fluid content mb-3">
+		<div class="row">
+			<div class="col">
+				<h4>Journal</h4>
+				<table class="table table-sm table-v-align-middle">
+					<tbody id="table-journal"></tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+<script>
+	var given = {
+		journal: <%- JSON.stringify( journal )  %>
+	};
+
+	var store = {
+		journal: []
+	};
+
+	var hooks = {
+        journal: document.getElementById('table-journal')
+	};
+
+	var sort = {
+		byName: function(a,b) { a=a.name.toLowerCase(); b=b.name.toLowerCase(); if( a > b ) return 1; if( a < b ) return -1; return 0; },
+		byDate: function(a,b) { a=a.date.getTime(); b=b.date.getTime(); 		if( a > b ) return 1; if( a < b ) return -1; return 0; }
+	};
+
+    function capitalizeFirstLetter(string) {
+        return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+	(function initialize(){
+		var i, len, temp, typeIDs = {};
+
+        console.log(given.journal[0]);
+
+        for( i = 0, len = given.journal.length; i < len; i++ ) {
+			var journal = given.journal[i];
+
+			temp = {
+				transactionID: journal.ref_id,
+				type: capitalizeFirstLetter(journal.ref_type.replace('_', ' ')),
+				date: new Date( journal.date ),
+				amount: journal.amount,
+				balance: journal.balance,
+				reason: journal.description
+			};
+
+			store.journal.push( temp );
+		}
+	})();
+
+	var journal = (function(){
+
+
+		function balancerClass( balance ) {
+			if( balance > 0 )
+				return " balance-positive ";
+			else if( balance < 0 )
+				return " balance-negative ";
+			return "";
+		}
+
+		function buildDescription( entry ) {
+			switch( entry.type ){
+				case "bounty_prizes": {
+					return "";
+				}
+			}
+
+		}
+
+
+		var publicFunctions = {
+			render: {
+				body: function( elem, data ){
+					var r = "";
+
+
+					r = data.reduce(function( r, entry ){
+						return r + '' +
+                            '<tr class="' + (entry.amount < 0 ? " isBuy ":"") + '">' +
+								'<td class="sm">' +
+								entry.date.toLocaleDateString() +
+								'</td>' +
+								'<td class="sm">' +
+								entry.date.toLocaleTimeString() +
+								'</td>' +
+								'<td>' +
+								entry.type +
+								'</td>' +
+								'<td class="text-right' + balancerClass(entry.amount) + ' ">' +
+								entry.amount.toLocaleString('en-US',{currency: 'ISK',minimumFractionDigits:2, maximumFractionDigits: 2}) + " ISK" +
+								'</td>' +
+								'<td class="text-right">' +
+								entry.balance.toLocaleString('en-US',{currency: 'ISK',minimumFractionDigits:2, maximumFractionDigits: 2}) + " ISK" +
+								'</td>' +
+								'<td class="text-right">' +
+										entry.reason +
+								'</td>' +
+								'</tr>';
+					}, r)
+
+					elem.innerHTML = r;
+				}
+			}
+		};
+
+		return publicFunctions;
+	})();
+
+	$(function(){
+		journal.render.body( hooks.journal, store.journal );
+	})
+</script>
+<% include ../../partials/footer %>

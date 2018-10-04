@@ -1,0 +1,22 @@
+<form method="post">
+	<% if( locals.messages && messages.warning ) { %>
+	<p><%= messages.warning[0] %></p>
+	<% } else { %>
+	<pre><%= JSON.stringify(messages, null, 4); %></pre>
+	<% } %>
+	<p>
+		<input type="text" name="refresh_token" placeholder="refresh_token"><input type="submit">
+	</p>
+	<p>
+		<input type="text" name="mainCharacterID" placeholder="Main CharacterID">
+		<input type="text" name="altCharacterID" placeholder="Alt CharacterID">
+		<button name="makeAlt" value="pressed">Make alt</button>
+	</p>
+	<pre><%= JSON.stringify(output, null, 4) %></pre>
+	<% for( var i = 0; i < output.length; i++ ) { %>
+	<div>
+		<img class="mr-3" src="//image.eveonline.com/Character/<%= output[i].CharacterID%>_32.jpg">
+		<%= output[i].CharacterName %> <button name="useCharacter" value="<%= output[i].CharacterID%>">Become this user</button>
+	</div>
+	<% } %>
+</form>

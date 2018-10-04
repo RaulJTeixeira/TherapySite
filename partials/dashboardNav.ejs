@@ -1,0 +1,18 @@
+<div class="container-fluid content mb-3">
+	<div class="row">
+		<div class="col d-flex text-center justify-content-around flex-wrap">
+			<% if( locals.char ) { %>
+			<a class="m-2" href="/dashboard/<%= char.CharacterID %>/">Dashboard</a>
+			<!---<a class="m-2" href="/dashboard/<%= char.CharacterID %>/assets">Assets</a>--->
+			<a class="m-2" href="/dashboard/<%= char.CharacterID %>/contacts">Contacts</a>
+			<a class="m-2" href="/dashboard/<%= char.CharacterID %>/history">Corp History</a>
+			<a class="m-2" href="/dashboard/<%= char.CharacterID %>/journal">Journal</a>
+			<!---<a class="m-2" href="/dashboard/<%= char.CharacterID %>/kills">Kills</a>--->
+			<!---<a class="m-2" href="/dashboard/<%= char.CharacterID %>/mail">Mail</a>--->
+			<a class="m-2" href="/dashboard/<%= char.CharacterID %>/skills">Skills</a>
+			<a class="m-2" href="/dashboard/<%= char.CharacterID %>/transactions">Transactions</a>
+			<!--<a class="m-2" style="color: rgb(0,256,0)" href="/dashboard/<%= char.CharacterID %>/all">All</a>-->
+			<% } %>
+		</div>
+	</div>
+</div>

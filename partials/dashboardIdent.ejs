@@ -1,0 +1,20 @@
+<div class="container-fluid content mb-3">
+	<div class="row">
+		<div class="col">
+			<% if( false && char.parent ) { %>
+			<div class="d-flex mb-3">
+				<img class="mr-3" src="//image.eveonline.com/Character/<%= char.parent.CharacterID %>_32.jpg" style="width:32px; height: 32px;">
+				<div class="mr-3">
+					<h5 style="white-space: nowrap;"><%= char.parent.CharacterName %> (main)</h5>
+				</div>
+			</div>
+			<% } %>
+			<div class="d-flex">
+				<img class="mr-3" src="//image.eveonline.com/Character/<%= char.CharacterID %>_32.jpg" style="width:32px; height: 32px;">
+				<div class="mr-3">
+					<h5 style="white-space: nowrap;"><%= char.CharacterName %></h5>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

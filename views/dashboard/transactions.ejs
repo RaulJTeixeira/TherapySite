@@ -1,0 +1,144 @@
+<% include ../../partials/header %>
+<style>
+	.balance-positive {
+		color: #00ff00;
+	}
+	.balance-negative {
+		color: #ff0000;
+	}
+	.isBuy {
+		background: rgba(127,0,0,.2);
+	}
+</style>
+<% include ../../partials/dashboardIdent %>
+<% include ../../partials/dashboardNav %>
+<div class="container content mb-3">
+	<div class="row">
+		<div class="col">
+			<h4>Transactions</h4>
+			<table class="table table-sm table-v-align-middle">
+				<thead>
+					<tr>
+						<th colspan="2">Date</th>
+						<th>Item</th>
+						<th>Client</th>
+						<th class="text-right">#</th>
+						<th class="text-right">ISK/U</th>
+						<th class="text-right">ISK</th>
+					</tr>
+				</thead>
+				<tbody id="table-transactions"></tbody>
+			</table>
+		</div>
+	</div>
+</div>
+
+<script>
+	var given = {
+		transactions: <%- JSON.stringify( transactions )  %>,
+		transactionsTypeIDs: <%- JSON.stringify( transactionsTypeIDs )  %>,
+		transactionsClients: <%- JSON.stringify( transactionsClients )  %>
+	};
+
+	var store = {
+		transactions: []
+	};
+
+	var hooks = {
+        transactions: document.getElementById('table-transactions')
+	};
+
+	var sort = {
+		byName: function(a,b) { a=a.name.toLowerCase(); b=b.name.toLowerCase(); if( a > b )return 1; if( a < b ) return -1; return 0; },
+		byDate: function(a,b) { a=a.date.getTime(); b=b.date.getTime(); if( a > b )return 1; if( a < b ) return -1; return 0; }
+	};
+
+	var clientHash = {};
+
+	(function initialize(){
+		var i, len, temp, typeIDs = {};
+
+		for( i = 0, len = given.transactionsTypeIDs.length; i < len; i++ ) {
+			typeIDs[given.transactionsTypeIDs[i].id] = given.transactionsTypeIDs[i]
+		}
+		for( i = 0, len = given.transactionsClients.length; i < len; i++ ) {
+			clientHash[given.transactionsClients[i].id] = given.transactionsClients[i]
+		}
+		for( i = 0, len = given.transactions.length; i < len; i++ ) {
+			var t = given.transactions[i];
+
+			temp = {
+				transactionID: t.transaction_id,
+				journalID: t.journal_ref_id,
+				locationID: t.location_id,
+				typeID: typeIDs[t.type_id].name,
+				clientID: t.client_id,
+				clientName: clientHash[t.client_id].name,
+				date: new Date( t.date ),
+				unitPrice: t.unit_price,
+				quantity: t.quantity,
+				isBuy: t.is_buy,
+				isPersonal: t.is_personal
+			};
+
+			store.transactions.push( temp );
+		}
+
+		console.log(store.transactions.length);
+	})();
+
+
+	var transactions = (function(){
+
+
+		var publicFunctions = {
+			render: {
+				body: function( elem, data ){
+					var r = "";
+
+					function balancerClass( isBuy ) {
+						if( isBuy )
+							return " balance-negative ";
+						return " balance-positive ";
+					}
+
+					r = data.reduce(function( r, entry ){
+						return r + '' +
+								'<tr class="' + (entry.isBuy?" isBuy ":"") + '">' +
+								'<td class="sm">' +
+								entry.date.toLocaleDateString() +
+								'</td>' +
+								'<td class="sm">' +
+								entry.date.toLocaleTimeString() +
+								'</td>' +
+								'<td>' +
+								entry.typeID +
+								'</td>' +
+								'<td>' +
+								entry.clientName +
+								'</td>' +
+								'<td class="text-right' + balancerClass(entry.isBuy) + '">' +
+								entry.quantity +
+								'</td>' +
+								'<td class="text-right">' +
+								entry.unitPrice.toLocaleString('en-US',{currency: 'ISK',minimumFractionDigits:2, maximumFractionDigits: 2}) + " ISK" +
+								'</td>' +
+								'<td class="text-right">' +
+								(entry.quantity * entry.unitPrice).toLocaleString('en-US',{currency: 'ISK',minimumFractionDigits:2, maximumFractionDigits: 2}) + " ISK" +
+								'</td>' +
+								'</tr>';
+					}, r)
+
+					elem.innerHTML = r;
+				}
+			}
+		};
+
+		return publicFunctions;
+	})();
+
+	$(function(){
+		transactions.render.body( hooks.transactions, store.transactions )
+	})
+</script>
+<% include ../../partials/footer %>

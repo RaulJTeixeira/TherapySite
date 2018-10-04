@@ -1,0 +1,371 @@
+<% include ../../partials/header %>
+<script>
+	let store = {};
+	let hooks = {};
+	let sort = {
+		by: function( attr, direction ) {
+			if( direction.toLowerCase() === 'asc' ) direction = 1;
+			if( direction.toLowerCase() === 'desc' ) direction = -1;
+
+			let parts = attr.split(' ')
+
+			return function( a, b ) {
+				for( let i = 0, len = parts.length; i < len; i++ ) {
+					let ap = parts[i];
+					let c=a[ap].toLowerCase(), d=b[ap].toLowerCase();
+					if( c > d ) return direction;
+					if( c < d ) return direction;
+				}
+				return 0;
+			}
+		}
+	};
+	sort.byName = function(a,b) { a=a.name.toLowerCase(); b=b.name.toLowerCase(); if( a > b )return 1; if( a < b ) return -1; return 0; };
+	sort.bycharacter_name = function(a,b) { a=a.character_name.toLowerCase(); b=b.character_name.toLowerCase(); if( a > b )return 1; if( a < b ) return -1; return 0; };
+
+	const enum_rockType = Object.freeze ({
+		ore: 1,
+		ice: 2,
+		moon: 3,
+		gas: 4,
+		unknown: 5
+	});
+
+	function grep( arr, attr, id ) {
+		for( let i = arr.length; i --> 0; )
+			if( arr[ i ][ attr ] == id ) {
+				arr.splice( i, 1 );
+				break;
+			}
+	}
+
+	function dictionary( store, name, arr, attr, callback ) {
+		store.dictionary[name] = (store.dictionary[name])?store.dictionary[name]:{};
+
+		for( let i = arr.length; i --> 0; ) {
+			let doc = arr[i];
+
+			callback && callback( doc );
+
+			store.dictionary[name][ doc[attr] ] = doc;
+		}
+	}
+	const MONTH_DESCRIPTION = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+	const ROCK_ORES_GROUPS 	= [450,451,452,453,454,455,456,457,458,459,460,461,462,467,468,469];
+	const ROCK_ICE_GROUPS	= [465];
+	const ROCK_MOON_GROUPS 	= [1884,1920,1921,1922,1923]; // ,2400,2401,2396,2397,2398]; IDK WHAT THESE NUMBERS ARE
+	const ROCK_ORES 	= [22,28618,17455,28617,1223,17466,46679,27028,28367,28421,28388,28418,46695,28430,28427,28385,28391,28392,46692,28394,46704,28431,28409,46691,28419,46703,28397,28415,28403,46698,28398,28406,46694,28410,28411,28412,28428,28413,28389,28395,28416,28396,46702,46693,28422,46700,28387,28399,28407,28408,28424,28404,46699,28423,46697,28429,28393,28417,28425,46701,28420,46705,28390,28432,28426,28414,28405,17470,17463,17425,1225,17433,46676,1232,46688,17471,17453,26852,26713,26868,46678,26851,28624,17467,46687,1229,17868,28622,1231,46682,17865,1226,46675,20,17452,28620,17869,17464,28619,11396,17429,17437,28623,1227,17436,46686,46677,28621,18,46684,28625,17426,17866,17449,17448,1224,17445,46683,17456,46681,1228,17432,17867,17459,46685,19,46689,17428,1230,17460,17870,17444,28626];
+	const ROCK_ICE 		= [16265, 16266, 16267, 17975, 17976, 17977, 17978, 28435, 28436, 28438, 28439, 28441, 28443, 28444, 28627, 28628, 28442, 16262, 16263, 16264, 16268, 16269, 28433, 28434, 28437, 28440];
+	const ROCK_MOON 	= [45492, 46316, 46314, 46312, 46318, 46284, 46286, 46282, 46280, 45502, 45501, 45506, 45494, 45493, 46288, 46290, 46294, 46292, 45495, 46285, 46287, 46283, 46281, 46305, 46311, 46309, 46307, 46302, 46296, 46298, 46300, 45512, 45511, 45498, 45504, 46304, 46310, 46308, 46306, 45497, 46303, 46297, 46299, 46301, 46317, 46315, 46313, 46319, 45499, 45491, 45496, 46289, 46291, 46295, 46293, 45500, 45510, 45513, 45490, 45503];
+
+	const iskOptions = { minimumFractionDigits: 0, maximumFractionDigits: 0 };
+
+	function rISK( n ) {
+		return Number( n ).toLocaleString( undefined, iskOptions );
+	}
+
+</script>
+<script>
+	let given = {
+		pilots: <%- JSON.stringify(pilots) %>,
+		storePilots: <%- JSON.stringify(storePilots) %>,
+		mining: <%- JSON.stringify(mining) %>,
+		rocks: <%- JSON.stringify(rocks) %>
+	};
+</script>
+<div id="app" class="container content">
+	<div class="row" v-cloak>
+		<div class="col-sm-12 col-md">
+			<div class="d-flex justify-content-between align-items-center mb-1">
+				<a class="btn btn-sm btn-dark" href="/leadership/krabnomicon/<%= last[0] %>/<%= MONTH_DESCRIPTION[ last[1] ] %>">Last Month</a>
+				<h3><%= MONTH_DESCRIPTION[ month ] %> <%= year %></h3>
+				<a class="btn btn-sm btn-dark" href="/leadership/krabnomicon/<%= next[0] %>/<%= MONTH_DESCRIPTION[ next[1] ] %>">Next Month</a>
+			</div>
+			<table class="table table-sm table-v-align-middle text-nowrap">
+				<thead>
+					<tr>
+						<td colspan="3">&nbsp;</td>
+						<td class="n">Tax</td>
+						<td class="n">Ore</td>
+						<td class="n">Ice</td>
+						<td class="n">Moon</td>
+						<td>Systems</td>
+						<td class="n">Total Value</td>
+					</tr>
+					<tr>
+						<td class="text-right" colspan="3">Total</td>
+						<td class="n">{{Number( totalTax ).toLocaleString(undefined, store.iskOptions) }}</td>
+						<td class="n">{{Number( totalOre ).toLocaleString(undefined, store.iskOptions) }}</td>
+						<td class="n">{{Number( totalIce ).toLocaleString(undefined, store.iskOptions) }}</td>
+						<td class="n">{{Number( totalMoon ).toLocaleString(undefined, store.iskOptions) }}</td>
+						<td></td>
+						<td class="n">{{Number( totalValue ).toLocaleString(undefined, store.iskOptions) }}</td>
+					</tr>
+				</thead>
+				<tbody id="mined-body-hook">
+					<template v-for="pilot in mainPilots">
+					<tr class="main">
+						<td class="sm p-0">
+							<img v-bind:src="'https://imageserver.eveonline.com/Character/' + pilot.character_id + '_32.jpg'">
+						</td>
+						<td colspan="2">{{pilot.character_name}}</td>
+						<td class="n">{{ Number( ( ( pilot.oreValue + pilot.iceValue) * store.taxRate ) ).toLocaleString( undefined, store.iskOptions ) }}</td>
+						<td class="n">{{ pilot.oreValueStr }}</td>
+						<td class="n">{{ pilot.iceValueStr }}</td>
+						<td class="n">{{ pilot.moonValueStr }}</td>
+						<td></td>
+						<td class="n">{{Number( pilot.totalValue ).toLocaleString(undefined, store.iskOptions )}}</td>
+					</tr>
+					<tr v-if="store.options.showAlts" v-for="alt in pilot.alts" class="alt">
+						<td class="sm p-0"></td>
+						<td class="sm p-0">
+							<img v-bind:src="'https://imageserver.eveonline.com/Character/' + alt.character_id + '_32.jpg'">
+						</td>
+						<td>{{alt.character_name}}</td>
+						<td class="n">{{ Number( ( ( alt.oreValue + alt.iceValue) * store.taxRate ) ).toLocaleString( undefined, store.iskOptions ) }}</td>
+						<td class="n">{{ alt.oreValueStr }}</td>
+						<td class="n">{{ alt.iceValueStr }}</td>
+						<td class="n">{{ alt.moonValueStr }}</td>
+						<td></td>
+						<td class="n">{{Number( alt.totalValue ).toLocaleString(undefined, store.iskOptions )}}</td>
+					</tr>
+					</template>
+				</tbody>
+			</table>
+		</div>
+		<div class="col-sm-12 col-md">
+			<h5>Options</h5>
+			<table class="table table-sm table-v-align-middle">
+				<tr>
+					<th class="text-right"><label for="taxRate">Tax Rate</label></th>
+					<td class="text-left"><input id="taxRate" class="form-control text-right m-1" v-model="store.taxRate"></td>
+				</tr>
+				<tr>
+					<th class="text-right"><label for="showAlts">Show Alts</label></th>
+					<td class="text-left"><input class="ml-1" type="checkbox" v-model="store.options.showAlts" id="showAlts"></td>
+				</tr>
+			</table>
+			<div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+				<h5>Ore Values</h5>
+				<button class="btn btn-sm btn-dark m-1" v-on:click="recalculateOreValues">Recalculate Ore Values</button>
+			</div>
+			<table class="table table-sm table-v-align-middle">
+				<tr v-for="rock in rocks">
+					<td class="sm"><span v-if="rock.name == 'unknown'">{{rock.id}}:</span>{{rock.name}} </td>
+					<td v-bind:class="'color-'+rockType(rock)">{{rockType(rock)}}</td>
+					<td><input class="form-control text-right p-0 pr-1" v-model="rock.average_price"></td>
+				</tr>
+			</table>
+		</div>
+	</div>
+</div>
+<script>
+	store.options = {
+		showAlts: false
+	}
+	store.taxRate = .07;
+	store.usedOres = {};
+	store.unknownOres = {};
+	store.iskOptions = iskOptions;
+	store.dictionary = {};
+	store.pilots 	= given.pilots;
+	store.rocks 	= given.rocks;
+
+	hooks.minedTable = document.getElementById('mined-body-hook');
+
+	function calculateValue( arr ) {
+		return arr.reduce( (r,v) => r + v.value , 0 );
+	}
+
+	function calculateOreValues( log ) {
+		let rock = store.dictionary.rock[ log.type_id ];
+		if( !rock ) {
+			rock = store.dictionary.rock[ log.type_id ] =
+				{
+					id: log.type_id,
+					name: 'unknown',
+					rockType: enum_rockType.unknown,
+					average_price: 1
+				};
+		}
+
+		if( !rock.average_price )
+			rock.average_price = 1;
+
+		log.value = rock.average_price * log.quantity;
+
+		return rock;
+	}
+	function calculatePlayerOreValues() {
+		for( let id in store.dictionary.pilot ) {
+			let pilot = store.dictionary.pilot[ id ];
+
+			pilot.oreValue 		= calculateValue( pilot.ore ) + pilot.alts.reduce((r,a) => r + calculateValue( a.ore ),0);
+			pilot.iceValue 		= calculateValue( pilot.ice ) + pilot.alts.reduce((r,a) => r + calculateValue( a.ice ),0);
+			pilot.moonValue 	= calculateValue( pilot.moon ) + pilot.alts.reduce((r,a) => r + calculateValue( a.moon ),0);
+			pilot.totalValue 	= calculateValue( pilot.mining ) + pilot.alts.reduce((r,a) => r + calculateValue( a.mining ),0);
+
+			pilot.oreValueStr 	= rISK( pilot.oreValue );
+			pilot.iceValueStr 	= rISK( pilot.iceValue );
+			pilot.moonValueStr 	= rISK( pilot.moonValue );
+			pilot.totalValueStr = rISK( pilot.totalValue );
+		}
+	}
+
+	(function initialize(){
+
+		dictionary(store,'rock',given.rocks,'id', function( rock ){
+			if( ROCK_ORES.indexOf( rock.id ) > -1 )
+				return rock.rockType = enum_rockType.ore;
+			if( ROCK_ICE.indexOf( rock.id ) > -1 )
+				return rock.rockType = enum_rockType.ice;
+			if( ROCK_MOON.indexOf( rock.id ) > -1 )
+				return rock.rockType = enum_rockType.moon;
+			return enum_rockType.unknown;
+
+		});
+		dictionary(store,'pilot',given.pilots,'character_id',function( pilot ){
+			pilot.mining = [];
+			pilot.ore = [];
+			pilot.ice = [];
+			pilot.moon = [];
+			pilot.alts = [];
+		});
+
+		for( let i = given.storePilots.length; i --> 0; ) {
+			let pilot = given.storePilots[ i ];
+
+			console.log('pilot');
+			console.log( pilot );
+
+			if( pilot.parent ) {
+				let parent 	=  store.dictionary.pilot[ pilot.parent.CharacterID ];
+				let child 	=  store.dictionary.pilot[ pilot.CharacterID ];
+
+				console.log( 'parent' );
+				console.log( parent );
+
+				console.log( 'child' );
+				console.log( child );
+
+				if( child ) {
+					parent.alts.push(child);
+				}
+
+				grep( given.pilots, 'character_id', pilot.CharacterID );
+			}
+		}
+
+		// Push the mining logs to the pilot
+		for( let i = given.mining.length; i --> 0; ) {
+			let log = given.mining[i];
+
+			let rock = calculateOreValues( log );
+
+			store.usedOres[ rock.id ] = rock;
+
+			let pilot = store.dictionary.pilot[ log.characterID ];
+			if( pilot ) {
+				pilot.mining.push( log );
+
+				switch( rock.rockType ) {
+					case enum_rockType.ore:
+						pilot.ore.push( log );
+						break;
+					case enum_rockType.ice:
+						pilot.ice.push( log );
+						break;
+					case enum_rockType.moon:
+						pilot.moon.push( log );
+						break;
+					default: break;
+				}
+			}
+		}
+
+		calculatePlayerOreValues();
+
+	})();
+
+	new Vue({
+		el: '#app',
+		data: {
+			sort: sort,
+			store: store
+		},
+		computed: {
+			rocks() {
+				return Object.values( this.store.usedOres ).sort( sort.byName );
+			},
+			mainPilots() {
+				function sortByTotalValue(a,b){
+					a = a.oreValue + a.iceValue;
+					b = b.oreValue + b.iceValue;
+
+					if( a > b ) return -1;
+					if( a < b ) return 1;
+					return 0;
+
+				}
+				return this.store.pilots.sort( sortByTotalValue ).map(p=>{
+					p.alts.sort( sortByTotalValue );
+					return p;
+				});
+			},
+			totalTax() {
+				return this.store.pilots.reduce((r, p)=>{
+					return r + ( p.oreValue + p.iceValue ) * this.store.taxRate;
+				},0);
+			},
+			totalOre() {
+				return this.store.pilots.reduce((r, p)=>{
+					return r + p.oreValue;
+				},0);
+			},
+			totalIce() {
+				return this.store.pilots.reduce((r, p)=>{
+					return r + p.iceValue;
+				},0);
+			},
+			totalMoon() {
+				return this.store.pilots.reduce((r, p)=>{
+					return r + p.moonValue;
+				},0);
+			},
+			totalValue() {
+				return this.store.pilots.reduce((r, p)=>{
+					return r + p.totalValue;
+				},0);
+			}
+		},
+		methods: {
+			recalculateOreValues() {
+				for( let i = given.mining.length; i --> 0; ) {
+					let log = given.mining[i];
+
+					calculateOreValues( log );
+				}
+
+				calculatePlayerOreValues();
+			},
+			rockType( rock ) {
+				switch( rock.rockType ) {
+					case enum_rockType.ore:
+						return 'ore';
+						break;
+					case enum_rockType.ice:
+						return 'ice';
+						break;
+					case enum_rockType.moon:
+						return 'moon';
+						break;
+					default:
+						return 'unknown';
+						break;
+				}
+			}
+		}
+	});
+
+</script>
+<% include ../../partials/footer %>

@@ -1,0 +1,179 @@
+html::-webkit-scrollbar {
+  width: 5px;
+  height: 8px;
+  background-color: rgba(0, 0, 0, 0.5);
+  /* or add it to the track */
+}
+html::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.5);
+}
+body {
+  color: white;
+  font-family: 'Exo', sans-serif;
+  background: black;
+  background: url("/images/bg/front-page-dark.jpg") no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+  font-size: 12px;
+}
+a {
+  color: #00B7FF;
+}
+main {
+  position: relative;
+  padding-top: 75px;
+  padding-bottom: 75px;
+  min-height: calc(100vh - 50px)!important;
+}
+nav.navbar {
+  background: url("/images/bg/dark-triangles-a.png");
+  border-bottom: 1px solid black;
+}
+.quantico {
+  font-family: 'Quantico', sans-serif;
+}
+h1,
+h2,
+h3,
+h4,
+h5 {
+  font-family: 'Quantico', sans-serif;
+}
+q {
+  quotes: "\201C" "\201D";
+}
+q:before {
+  content: open-quote;
+  font-family: arial, sans-serif;
+  font-weight: bold;
+}
+q:after {
+  content: close-quote;
+  font-family: arial, sans-serif;
+  font-weight: bold;
+}
+.navbar-brand {
+  font-family: 'Exo', sans-serif;
+}
+.content {
+  padding: 15px;
+  background: url("/images/bg/dark-triangles-a.png");
+  box-shadow: 0 0 20px black;
+}
+pre {
+  color: white;
+}
+.btn-discord {
+  color: white;
+  background: #343E68;
+}
+.btn-discord img {
+  vertical-align: baseline;
+  width: 15px;
+  margin-right: 5px;
+}
+.scrollable::-webkit-scrollbar {
+  width: 5px;
+  height: 8px;
+  background-color: rgba(0, 0, 0, 0.5);
+  /* or add it to the track */
+}
+.scrollable::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.5);
+}
+.no-padding {
+  padding: 0 !important;
+}
+a {
+  cursor: pointer;
+}
+.sm {
+  white-space: nowrap;
+  width: 1px;
+}
+table .text-nowrap td,
+table .text-nowrap th {
+  white-space: nowrap;
+}
+table td.sm,
+table th.sm {
+  white-space: nowrap;
+  width: 1px;
+}
+table td.n,
+table th.n {
+  text-align: right;
+}
+.table-v-align-middle th,
+.table-v-align-middle td {
+  vertical-align: middle;
+}
+.table th,
+.table td {
+  border: 0;
+}
+.table thead th {
+  border: 0;
+  border-bottom: 1px solid #414141;
+}
+.table tr:not(:last-of-type) td,
+.table tr:not(:last-of-type) th {
+  border-bottom: 1px solid rgba(65, 65, 65, 0.5);
+}
+.table-borderless td,
+.table-borderless th {
+  border: 0;
+}
+.normal-anchor {
+  color: white;
+}
+.normal-anchor:hover {
+  color: white;
+}
+.btn {
+  cursor: pointer;
+}
+.btn-dark {
+  background: rgba(127, 127, 127, 0.5);
+}
+.textarea {
+  color: white;
+  background: rgba(127, 127, 127, 0.1);
+  padding: 5px;
+  width: 100%;
+  overflow-y: scroll;
+}
+.textarea font {
+  font-size: 12px !important;
+}
+.form-control {
+  color: white;
+  background: rgba(127, 127, 127, 0.1);
+  border-color: rgba(65, 65, 65, 0.5);
+  width: 100%;
+  border-radius: 0;
+  padding: 5px;
+  font-size: 12px;
+  line-height: 18px;
+}
+.form-control:focus {
+  background: rgba(127, 127, 127, 0.1);
+}
+.color-moon {
+  color: #80803f;
+}
+.color-ice {
+  color: #418080;
+}
+.color-ore {
+  color: #806a46;
+}
+.color-unknown {
+  color: #801716;
+}
+footer {
+  background: black;
+  background: url("/images/bg/dark-triangles-a.png");
+}

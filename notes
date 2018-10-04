@@ -1,0 +1,86 @@
+TODO of wish list
+
+
+Approval questions
+	Hey there looks like you want to join our corporation! We usually have a list of
+	questions that we ask new recruits to answer and understand to ensure that
+	as a group of players we have a good understanding of what our group alignment
+	and desires are.
+
+	Our Requirements:
+	5 million SP minium
+	300 minutes (5 hours) of fleet time a month. *
+	Must be willing to spend time with us if you're online, and in EvE. *
+
+	* Real life comes first, this is just a serious space ships game bro.
+
+	Some Questions for you:
+
+    What makes EvE enjoyable to you?
+	[Insert text]
+
+	Describe the kind of community you are looking for in the game.
+
+	Which do you like group or independent activities. What activities/oppertunies do you expect us to proved?
+
+	Are you willing to follow us into Group vs Group warfare even if it means hardship,
+	low pay, and long hours?
+
+	Do you undock?
+	yes
+	no
+	sometimes
+	I'm secretly an NC spy
+
+	In the end were looking for people to fit a certain lifestyle of nullsec warfare.
+	Group vs Group, were here for that and that alone. If you just want to krab, and
+	be anti-social this may not be the corp for you.
+
+
+Approval process
+	user logs into the system
+	First time login, non member!
+		Applies to the corporation BUTTON!
+			Series of questions.
+			How to join quick reference page for tooling
+
+		Recruiter checks info
+			Set status
+				pending
+				accepted
+				denied add a denied message for the user
+
+		Permalock as main account
+		Set discord groups
+			Capitals
+			IT
+			Other things
+
+		Save the user information
+		Action log
+
+Active list of users
+	generate an active list of users
+		plus titles
+		plus manually assigned groups
+
+Consider implications of Alliance Wide IT infrastructure.
+	Multiple IT applications
+	Corps with access to the same pool of resources
+
+
+Job to fetch active list of pilots
+	update any changes into the action log
+
+Generate an Admin Groups manager
+	Permissions based
+	Group managed
+
+Fittings manager
+	Upload a fitting
+	Search list of fittings
+
+Marketeer
+	Have a item database
+	Order fulfillment
+	Deliviery tracking

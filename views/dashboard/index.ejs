@@ -1,0 +1,142 @@
+<% include ../../partials/header %>
+	<style>
+		table.attributes th, table.attributes td {
+			padding: 5px;
+			text-align: center;
+		}
+		table.attributes td {
+			border-top: 1px solid #414141;
+		}
+		tr.npc-corporation td {
+			background: rgba(0,0,180,.2);
+		}
+		.character-description {
+			border: 0;
+			background: rgba(32,32,32,.7);
+			padding: 5px 10px;
+			min-height: 200px;
+			max-height: 300px;
+			width: 100%;
+			overflow-y:scroll;
+			margin: 10px 0;
+		}
+		.character-description font {
+			font-size: 12px !important;
+		}
+		table.alts-table td {
+			vertical-align: middle;
+		}
+	</style>
+	<% include ../../partials/dashboardNav %>
+<div class="container-fluid content mb-3">
+	<div class="row">
+		<div class="col-xs-12 col-md-4">
+			<div class="d-flex flex-column flex-xl-row">
+				<img class="mr-3" src="//image.eveonline.com/Character/<%= char.CharacterID %>_256.jpg" style="width:200px;height:200px">
+				<div>
+					<h5 class="mb-0" style="white-space: nowrap;"><%= char.CharacterName %></h5>
+					<p><% if( titles && Array.isArray( titles ) ) { %><%= titles.map(t=>t.name).join(', ') %><% } %></p>
+					<% if( publicInfo.alliance_id ) { %>
+					<div style="white-space: nowrap;">
+						<a target="_blank" href="http://evemaps.dotlan.net/alliance/<%= publicInfo.alliance_id %>">
+							<img src="//image.eveonline.com/Alliance/<%= publicInfo.alliance_id %>_32.png">
+							<%= publicInfo.alliance_name %>
+						</a>
+					</div>
+					<% } %>
+					<div style="white-space: nowrap;">
+						<a target="_blank" href="http://evemaps.dotlan.net/corp/<%= publicInfo.corporation_id %>">
+							<img src="//image.eveonline.com/Corporation/<%= publicInfo.corporation_id %>_32.png">
+							<%= publicInfo.corporation_name %>
+						</a>
+					</div>
+					<p class="mb-0 p-1 pt-0"><%= Number(skills.total_sp).toLocaleString() %> SP in <%= skills.skills.length %> skills</p>
+					<p class="mb-2 p-1 pt-0"><%= Number(balance).toLocaleString() %> ISK</p>
+				</div>
+			</div>
+			<div>
+				<div class="character-description scrollable"><%- publicInfo.description %></div>
+			</div>
+		</div>
+		<div class="col-xs-12 col-md-4">
+			<h2>Hello <%= char.CharacterName.split(' ')[0] %>!</h2>
+			<p>Be sure to connect your alts to your main account.</p>
+			<form method="post">
+				<table class="table table-sm table-v-align-middle">
+					<thead>
+					<tr><th colspan="2">Characters</th></tr>
+					</thead>
+					<tbody>
+					<tr>
+						<td class="sm p-0"><img src="//image.eveonline.com/Character/<%= char.CharacterID %>_32.jpg"></td>
+						<td colspan="3" class="text-left"><a href="/dashboard/"><%= char.CharacterName %> (main)</a></td>
+					</tr>
+					<% if( char.alts && char.alts.length > 0 ) {
+						char.alts.sort(function(a,b){a= a.CharacterName?a.CharacterName.toLowerCase():'';b= b.CharacterName?b.CharacterName.toLowerCase():'';if(a>b)return 1;if(a < b)return -1;return 0;});
+					for( var i = 0, alt; i < char.alts.length; i++ ) {
+						alt = char.alts[i];
+					%>
+					<tr>
+						<td class="sm p-0"></td>
+						<td class="sm p-0"><img src="//image.eveonline.com/Character/<%= alt.CharacterID %>_32.jpg"></td>
+						<td class="text-left"><a href="/dashboard/<%= alt.CharacterID %>"><%= alt.CharacterName %></a></td>
+						<td class="text-left" style="width: 1px;"><button class="btn btn-sm btn-outline-danger" name="removeAlt" value="<%= alt._id %>">Remove</button></td>
+					</tr>
+					<% }
+					} else { %>
+					<tr><td colspan="2">No alts registered</td></tr>
+					<% } %>
+					</tbody>
+				</table>
+			</form>
+			<div class="text-right">
+				To add an alt login through EvE:
+				<a href="<%= altLoginURL  %>">
+					<img src="https://images.contentful.com/idjq7aai9ylm/12vrPsIMBQi28QwCGOAqGk/33234da7672c6b0cdca394fc8e0b1c2b/EVE_SSO_Login_Buttons_Small_Black.png?w=195&h=30">
+				</a>
+			</div>
+		</div>
+		<div class="col-xs-12 col-md-4">
+			<h3>Discord</h3>
+			<% if( char.discordUser ) { %>
+			<p>Connected as: <img style="width: 32px; height: 32px;" src="https://cdn.discordapp.com/avatars/<%= char.discordUser.id %>/<%= char.discordUser.avatar %>.png"> <%= char.discordUser.username %></p>
+			<% } else { %>
+			<p>Connect your discord account so you can be automatically authed in Discord.</p>
+			<% } %>
+			<% if( locals.discordLoginURL ) { %>
+			<a class="btn btn-sm btn-discord mb-3" href="<%= discordLoginURL %>">
+				<img src="/images/discord_white.svg"> Connect Discord
+			</a>
+			<% } %>
+		</div>
+	</div>
+</div>
+<% function hasRights( user, roles ){
+	return !roles
+			|| roles.length === 0
+			|| user.titles.filter(t=>{
+				return roles.indexOf( t.name ) > -1;
+			}).length
+}
+%>
+
+<% if( hasRights( user, ['Senior','Recruiting Officer','Recruiter'] ) ) { %>
+<div class="container-fluid content mb-3">
+	<div class="row">
+		<div class="col-xs-12 col-md-4">
+		</div>
+		<div class="col-xs-12 col-md-4">
+
+		</div>
+		<div class="col-xs-12 col-md-4">
+			<h2>Notes</h2>
+			<form>
+				<textarea class="character-description scrollable"><%- publicInfo.description %></textarea>
+				<input class="btn btn-dark" type="submit" name="post-note">
+			</form>
+		</div>
+	</div>
+</div>
+<% } %>
+</main>
+<% include ../../partials/footer %>

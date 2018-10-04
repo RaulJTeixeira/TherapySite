@@ -1,0 +1,26 @@
+<table>
+	<tbody>
+	<%
+
+	docs.sort(( a, b )=>{
+	    if( a.characterID > b.characterID )
+	        return 1;
+	    if( a.characterID < b.characterID )
+	        return -1;
+	    return 0;
+	});
+
+
+	for(var i = 0; i < docs.length; i++ ) { let doc = docs[i]; %>
+
+
+		<tr>
+			<td><%= doc.characterID %></td>
+			<td><%= doc.date %></td>
+			<td><%= doc.type_id %></td>
+			<td><%= doc.quantity %></td>
+		</tr>
+
+<% } %>
+	</tbody>
+</table>
