@@ -17,6 +17,15 @@
 			<div class="col">
 				<h4>Journal</h4>
 				<table class="table table-sm table-v-align-middle">
+					<thead>
+						<tr>
+							<th colspan="2">Date</th>
+							<th class="text-left">Type</th>
+							<th class="text-right">Amount</th>
+							<th class="text-right">Balance</th>
+							<th class="text-right">Description</th>
+						</tr>
+					</thead>
 					<tbody id="table-journal"></tbody>
 				</table>
 			</div>
@@ -54,7 +63,7 @@
 
 			temp = {
 				transactionID: journal.ref_id,
-				type: capitalizeFirstLetter(journal.ref_type.replace('_', ' ')),
+				type: capitalizeFirstLetter(journal.ref_type.split('_').join(' ')),
 				date: new Date( journal.date ),
 				amount: journal.amount,
 				balance: journal.balance,
