@@ -66,12 +66,12 @@ module.exports = function( app ){
 
 	app.get('/', passport.buildEvELoginUrl('loginURL','l', settings.eve.scopes ), function( req, res ) {
 		return res.render('index', {
-            forumURL: 'http://localhost:3000/?test'
+            forumURL: 'http://ec2-35-176-142-92.eu-west-2.compute.amazonaws.com:6666'
         });
 	});
 	app.get('/front-page', passport.buildEvELoginUrl('loginURL','l', settings.eve.scopes ), function( req, res ) {
 		return res.render('front-page', {
-            forumURL: 'http://localhost:3000/?test'
+            forumURL: 'http://ec2-35-176-142-92.eu-west-2.compute.amazonaws.com:6666'
         });
 	});
 
