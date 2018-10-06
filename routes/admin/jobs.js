@@ -31,7 +31,6 @@ router.post('/:name', function( req, res, next ){
 });
 
 router.get('/',
-	passport.auth(['adminView']),
 	function( req, res, next ) {
 
 	return buildView().then(( data ) => {

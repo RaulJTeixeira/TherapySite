@@ -37,7 +37,6 @@ router.post('/', function( req, res, next ){
 });
 
 router.get('/',
-	passport.auth(['adminView']),
 	passport.buildEvELoginUrl( 'corpLoginUrl', 'c', settings.eve.corporation_scopes ),
 	function( req, res, next ) {
 	/*

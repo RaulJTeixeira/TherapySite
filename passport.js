@@ -164,7 +164,6 @@ function auth( permissions ) { // Simple list of keys to checks that act as a co
 	let keys = permissions;
 
 	return function( req, res, next ) {
-		// If the session is not set
 
         if( !( req.session && req.session.user ) ) {
 			req.session.destroy();
