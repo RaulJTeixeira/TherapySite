@@ -36,10 +36,13 @@ const ESI_ALLIANCE_READ_CONTACTS 		= "esi-alliances.read_contacts.v1";
 
 module.exports = {
 	"admin": {
+		"username": 		"saaj",
+		"password": 		"saaj",
+		"CharacterName": 	"SaaJ Vrikul",
+		"CharacterID": 		90903362,
 		"directors": [
-			91862283,  // Cave
 			1501833430, // Iron
-			90903362 // SaaJ
+            996642987 // Thaer
 		],
 		"secretkey": 		"PlanetOliverTwist" // Make sure this is not blank
 	},
