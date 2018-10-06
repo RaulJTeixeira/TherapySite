@@ -50,7 +50,7 @@ module.exports = {
 		"secretKey": 	"rfHBQQsI5xonei3uMdBg7pA7elZyqlip6ZXaXObV",
 		"esiURL": 		"https://esi.tech.ccp.is/latest/",
 		"loginURL": 	"https://login.eveonline.com/oauth/authorize",
-		"callbackURL": 	"http://localhost:3000/callback/eve",
+		"callbackURL": 	"http://ec2-35-176-142-92.eu-west-2.compute.amazonaws.com/callback/eve",
 		"tokenURL": 	"https://login.eveonline.com/oauth/token",
 		"verifyURL": 	"https://login.eveonline.com/oauth/verify",
 		"esi": {

@@ -37,6 +37,7 @@
 	.skill-Cal { text-align: center; font-size: 10px; background: #0A3E91; }
 	.skill-Gal { text-align: center; font-size: 10px; background: #28483d; }
 	.skill-Min { text-align: center; font-size: 10px; background: #4f2121; }
+	.skill-Tri { text-align: center; font-size: 10px; background: #ff0a0a; }
 	.skill-level-u { background: #412020; }
 	.skill-level-0 { background: #7f0000; }
 	.skill-level-1 { background: #7f3e00; }
@@ -117,6 +118,7 @@
 						<thead>
 						<tr>
 							<th></th>
+							<th class="skill-Tri">Tri</th>
 							<th class="skill-Am">Am</th>
 							<th class="skill-Cal">Cal</th>
 							<th class="skill-Gal">Gal</th>
@@ -126,6 +128,7 @@
 						<tbody>
 						<tr>
 							<td>Frigate</td>
+							<td class="skill" data-skill="Precursor Frigate"></td>
 							<td class="skill" data-skill="Amarr Frigate"></td>
 							<td class="skill" data-skill="Caldari Frigate"></td>
 							<td class="skill" data-skill="Gallente Frigate"></td>
@@ -133,6 +136,7 @@
 						</tr>
 						<tr>
 							<td>Destroyer</td>
+							<td/>
 							<td class="skill" data-skill="Amarr Destroyer"></td>
 							<td class="skill" data-skill="Caldari Destroyer"></td>
 							<td class="skill" data-skill="Gallente Destroyer"></td>
@@ -140,6 +144,7 @@
 						</tr>
 						<tr>
 							<td>Cruiser</td>
+							<td class="skill" data-skill="Precursor Cruiser"></td>
 							<td class="skill" data-skill="Amarr Cruiser"></td>
 							<td class="skill" data-skill="Caldari Cruiser"></td>
 							<td class="skill" data-skill="Gallente Cruiser"></td>
@@ -147,6 +152,7 @@
 						</tr>
 						<tr>
 							<td>Battlecruiser</td>
+							<td/>
 							<td class="skill" data-skill="Amarr Battlecruiser"></td>
 							<td class="skill" data-skill="Caldari Battlecruiser"></td>
 							<td class="skill" data-skill="Gallente Battlecruiser"></td>
@@ -154,6 +160,7 @@
 						</tr>
 						<tr>
 							<td>Battleship</td>
+							<td class="skill" data-skill="Precursor Battleship"></td>
 							<td class="skill" data-skill="Amarr Battleship"></td>
 							<td class="skill" data-skill="Caldari Battleship"></td>
 							<td class="skill" data-skill="Gallente Battleship"></td>
@@ -228,7 +235,12 @@
 						<tbody>
 						<tr><td>Heavy Assault Cruisers</td><td class="skill" data-skill="Heavy Assault Cruisers"></td></tr>
 						<tr><td>Recon Ships</td><td class="skill" data-skill="Recon Ships"></td></tr>
-						<tr><td>Logistics</td><td class="skill" data-skill="">?????</td></tr>
+						</tbody>
+					</table>
+					<table class="skills-table mb-3">
+						<tbody>
+						<tr><td>Logistics Frigates</td><td class="skill" data-skill="Logistics Frigates">Logistics Frigates</td></tr>
+						<tr><td>Logistics Cruisers</td><td class="skill" data-skill="Logistics Cruisers">Logistics Cruisers</td></tr>
 						</tbody>
 					</table>
 					<table class="skills-table mb-3">
@@ -612,11 +624,12 @@
 			store.skillNameHash[ hash.name ] = hash;
 		}
 
-
 	})();
 
 	$('.skill').map(function( i, elem ) {
 		elem = $(elem);
+
+		console.log(elem.data('skill'));
 
 		var skill = store.skillNameHash[ elem.data('skill') ];
 
@@ -625,6 +638,10 @@
 				.attr( 'title', elem.data('skill') );
 
 		elem.tooltip();
+
+		if(elem.data('skill').startsWith("Logi")){
+		    console.log(skill);
+		}
 
 		if( skill ) {
 			elem
@@ -685,6 +702,7 @@
 					'</div>';
 		}
 		function renderRow( r, skill ){
+
 			return r + '' +
 					'<tr>' +
 					'<td>' +

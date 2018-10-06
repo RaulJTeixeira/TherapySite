@@ -1,8 +1,6 @@
 var http = require('http');
 var app = require('../app');
 
-isDevelopment && console.log('Development mode active');
-
 var server = http.createServer(app);
 var port = normalizePort( process.env.PORT || '3000' );
 app.set( 'port', port );

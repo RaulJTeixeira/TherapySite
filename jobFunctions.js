@@ -27,27 +27,11 @@ function pilotHasScope( pilot, role ) {
 
 function vanityJobBegin( name, vanity ) {
 	let start = new Date();
-
-	if( vanity ) {
-		console.log("-------------------------");
-		console.log("    " + name + " running");
-		console.log("-------------------------");
-		console.log(start);
-		console.log("-------------------------");
-	}
-
 	return start;
 }
 function vanityJobEnd( name, start, vanity ) {
 	let end = new Date();
 	let dif = end.getTime() - start.getTime();
-
-	if( vanity ) {
-		console.log("-------------------------");
-		console.log("    " + name + " complete");
-		console.log(dif + " seconds");
-		console.log("-------------------------");
-	}
 }
 
 function runJob( name, job, vanity ) {

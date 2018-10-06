@@ -10,9 +10,7 @@ module.exports = function( app ){
 	app.use(function buildNavigationHeader( req, res, next ) {
 		let header = {};
 
-        console.log(" ****** Building Navigation Header ******");
 		if( res.locals.user ) {
-            console.log(" ****** Is User ******");
 
 			header = {
 				"Dashboard": {
@@ -29,7 +27,6 @@ module.exports = function( app ){
 			};
 
 			if( res.locals.user.CharacterID == settings.admin.CharacterID ) {
-                console.log(" ****** Is Admin ******");
                 header["Admin"] = {
 					url: "/admin",
 					children: [

@@ -251,8 +251,6 @@
 
 				let r = ''
 
-				console.log('render');
-
 				r += data
 						.filter( filter )
 						.sort((a,b)=>{
@@ -267,7 +265,7 @@
 
 							return r +
 									'<div>' +
-										'<h5>' + l.name + ' ' + l.count + ' items</h5>' +
+										'<h5>' + l.name + ' - [' + l.count + ']  items</h5>' +
 										'<div class="item-container d-flex flex-wrap w-100">' +
 											l.assets.reduce(renderItem,'') +
 										'</div>' +

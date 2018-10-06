@@ -64,13 +64,9 @@
 
 	(function initialize(){
 
-	    console.log("INIT corp history");
-        console.log("!!!!!!!!!!!!!!!!  !!!!!!!!!!!!!!!!!!!! >> " +  given.corpHistory.length);
-
 		for( let endDate = new Date(), i = 0, len = given.corpHistory.length; i < len; i++ ) {
 
 			let entry = given.corpHistory[i];
-            console.log("Creating entry for : "+ entry.corporation_name);
 
 			let startDate = new Date( entry.start_date );
 

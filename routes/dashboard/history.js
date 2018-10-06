@@ -20,7 +20,6 @@ router.get('/:id/history', passport.auth(['isAltOfUser','pilotViewOthers']), fun
 		.then(async function (user) {
             res.locals.char = user;
 
-            console.log("HISTORY.JS");
             let result = await dashboard.getCorpHistory(user);
             res.render('dashboard/history', result);
 

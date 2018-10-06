@@ -67,13 +67,10 @@ function updateUser( user ) {
 	});
 }
 function refreshUser( user, populate ) {
-    console.log( " --- Refreshing user ---" );
 
 	return new Promise(function( resolve ){
 
 		if(user.token.created.getTime() + 1100000 < Date.now() ) {
-
-            console.log( " --- Token is old ---" );
 
 			esi.refresh(user.token.refresh_token)
 				.then(function (token) {
@@ -105,12 +102,10 @@ function refreshUser( user, populate ) {
 					}
 				}).catch(function( error ){
 					console.error( error );
-					console.log( 'Error refreshing token' );
 					resolve( undefined );
 				});
 
 		} else {
-            console.log( " --- User is Ready ---" );
 			resolve(user);
 		}
 	});
@@ -161,9 +156,6 @@ function isAdmin( user ) {
 
 function auth( permissions ) { // Simple list of keys to checks that act as a conditional OR statement
 
-    console.log(permissions);
-
-
     if(!permissions)
 		permissions = [];
 	if( permissions && !Array.isArray( permissions ) )
@@ -177,22 +169,14 @@ function auth( permissions ) { // Simple list of keys to checks that act as a co
         if( !( req.session && req.session.user ) ) {
 			req.session.destroy();
 
-			console.log('Destroying session');
-
 			return res.redirect('/'); // User is trying to access an authorized part of the system
 		}
 
 		if( !res.locals.user ) {
-
-			console.log('Locals is not defined');
 			return res.redirect( '/' );
 		}
 
 		let user = res.locals.user;
-
-		//console.log( user );
-		console.log( user.permissions );
-
 		for( let i = 0; i < keys.length; i++ ) {
 			let operation = permissionsList.get( keys[i] );
 
@@ -252,29 +236,13 @@ function buildDiscordLoginUrl( returnVar, state ) {
 function trackSession( req, res, next ) {
 	res.locals.path = req.path;
 
-/*	if( isDevelopment && !req.session.user ) {
-		console.log( Date.now(), 'isDevelopment: Setting the admin as default user');
-
-		req.session.user = {
-			CharacterName: settings.admin.CharacterName,
-			CharacterID: settings.admin.CharacterID
-		};
-
-		return res.redirect('/dashboard');
-	}*/
-
-    console.log( ' -- Tracking session started -- ' );
-
-	//req.session.user = null;
 	if( !req.session.user ) {
-        console.log(' -- No user, moving on. -- ');
         return next();
     }
 
 	res.locals.session = req.session;
 
 	if( req.session.user ) {
-        console.log(' -- Have a user, working with [' + req.session.user.CharacterName + '] -- ');
 
 		models
 			.loginModel
@@ -284,15 +252,11 @@ function trackSession( req, res, next ) {
 			.populate('permissionGroups')
 			.exec()
 			.then(( user )=>{
-                console.log(' -- Building Login User -- ');
-
-                //isDevelopment && console.log( user );
 				// Checks for refreshing token
 				return refreshUser( user, true ); // Refresh the API Token
 			})
 			.then( function( currChar ) {
 
-				isDevelopment && console.log( 'TRACKING USER IS FRESH:', currChar != undefined );
 				if( !currChar ) {
 					req.session.user = undefined;
 					req.flash('warning', 'User is not fresh and could not be refreshed.' );
@@ -337,13 +301,11 @@ function logout( req, res ) {
 
 function callbackEVE( req, res ){
 
-	console.log(" --- EVE Callback");
 	let failURL = '/';
 	let corpReturnURL = '/dashboard';
 
 	// Must have code and state
 	if( ! ( req.query && req.query.code && req.query.state ) ){
-        console.log(" --- Does not have code and state?");
         return res.redirect( failURL );
     }
 
@@ -354,7 +316,6 @@ function callbackEVE( req, res ){
 	let _alt;
 
 	if( !( isCorpLogin || isLogin || isAltLogin ) ) { // This must match our callback url
-        console.log(" --- Not an accepted login");
         return res.redirect(failURL);
     }
 
@@ -366,13 +327,10 @@ function callbackEVE( req, res ){
 			});
 
 	if( isLogin || isAltLogin ) {
-        console.log(" --- Login or Alt Login");
         esi.authenticate(req.query.code) // Authenticate to get active token
             .then((token) => {
-                console.log(" --- Have token, grabbing Pilot");
                 // Get the EvE pilot
                 return esi.verify(token).then((pilot) => {
-                    console.log(" --- Returning pilot: " + pilot.CharacterName);
                     pilot.token = token; // Attach the token
 
                     return pilot;
@@ -381,7 +339,6 @@ function callbackEVE( req, res ){
             .then(character => {
                 // Check if character is different than current session
                 let user = req.session.user;
-                console.log(" --- Creating Logged User");
 
                 if (isLogin) // If it is a normal login skip to next step
                     return Promise.resolve(character);
@@ -396,7 +353,6 @@ function callbackEVE( req, res ){
                     .exec()
                     .then(function (parent) {
                         character.parent = parent._id;
-                        console.log(" --- Logged in as an alt?");
                         _alt = character;
 
                         return updateUser(character).then(function (altUser) {
@@ -422,7 +378,6 @@ function callbackEVE( req, res ){
                     return Promise.resolve(character);
             })
             .then((character) => {
-                console.log(" --- Building Local user");
                 req.session.user = {
                     CharacterName: character.CharacterName,
                     CharacterID: character.CharacterID
@@ -432,15 +387,12 @@ function callbackEVE( req, res ){
                     req.flash('info', _alt.CharacterName + ' successfully connected to your main account.');
                 else {
                     req.flash('info', 'Successfully logged in.');
-                    console.log(" --- Logged in? " + req.session.user.CharacterID +" - " + req.session.user.CharacterName)
                 }
 
-                console.log(" --- Logged in? " + req.session.user.CharacterID +" - " + req.session.user.CharacterName)
                 return res.redirect(corpReturnURL);
             })
             .catch(function (err) {
                 console.error(err);
-                console.log(" --- Failed to Create Local user: " + err);
 
                 req.flash('error', err.message);
 

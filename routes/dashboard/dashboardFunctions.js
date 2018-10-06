@@ -227,24 +227,26 @@ function resolveLocation( locationID, user ) {
 			} else if( locationID < 9000000000000000000 )  {
 				return esi.universe.getStructure( locationID, user );
 			} else {
-				return Promise.resolve({ id: locationID, name: "unknown" });
+				return Promise.resolve({ id: locationID, name: "Unknown Location" });
 			}
 		})
 		.then(( location )=>{
-			if( location.name == "forbidden" || location.name == "broken" || location.name == "unknown" )
-				return location;
-
 			location.id = locationID;
 
-			let optionUpsertAndReturn = {upsert: true, new: true };
+			if(location.name.startsWith('Unknown')) {
 
-			return models.locationModel.findOneAndUpdate(
-				{id: location.id},
-				location,
-				optionUpsertAndReturn
-			)
-				.populate('position')
-				.exec();
+                let optionUpsertAndReturn = {upsert: true, new: true};
+
+                return models.locationModel.findOneAndUpdate(
+                    {id: location.id},
+                    location,
+                    optionUpsertAndReturn
+                )
+                    .populate('position')
+                    .exec();
+            }
+
+            return location;
 		})
 		.catch(( err )=>{
 			console.log( err );
@@ -252,9 +254,10 @@ function resolveLocation( locationID, user ) {
 }
 
 function getLocation( user, locationID ) {
+
 	return DBGetLocation( locationID )
 			.then( ( location ) => {
-				if( location && location !== null )
+				if( location && location !== null && !location.name.startsWith("Unknown") )
 					return location;
 				else {
 					return resolveLocation( locationID, user );

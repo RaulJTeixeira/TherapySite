@@ -288,8 +288,8 @@ module.exports = esi = {
 					return Promise.all( promises );
 				})
 				.then((r)=>{
-					for( let i = 0, len = _assets.length; i < len; i++ ) {
-						_assets = _assets.concat( r[i].body );
+					for( let i = 0, len = r.length; i < len; i++ ) {
+						_assets = _assets.concat( r[i] );
 					}
 
 					return _assets;
@@ -617,19 +617,13 @@ module.exports = esi = {
 	universe: {
 		getPlanet: function() {},
 		getStation: function( id ) {
-			return esiGet('universe/stations/' + id + '/');
+			return esiGet('universe/stations/' + id + '/').catch( () => { return Promise.resolve({ id: id, name: "Unknown Station" });});
 		},
-		getStructure: function( structureID, user ) {
-			return esiGet('universe/structures/' + structureID + '/', null, user )
-				.catch( err => {
-					if( err && err.response && err.response.body.error == "Forbidden" )
-						return Promise.resolve({ id: structureID, name: "forbidden" });
-					else
-						return Promise.resolve({ id: structureID, name: "broken" });
-				});
+		getStructure: function( id, user ) {
+			return esiGet('universe/structures/' + id + '/', null, user ).catch( () => { return Promise.resolve({ id: id, name: "Unknown Structure" });});
 		},
 		getSystem: function( id ) {
-			return esiGet('universe/systems/' + id + '/');
+			return esiGet('universe/systems/' + id + '/').catch( () => { return Promise.resolve({ id: id, name: "Unknown System" });});
 		},
 		getSystems: function() {},
 		getTypeIDInformation: function(){},

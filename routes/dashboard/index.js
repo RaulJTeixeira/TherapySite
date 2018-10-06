@@ -15,8 +15,6 @@ function handlePost( req, res, next ) {
     let id = req.params.id;
     let characterID = req.body.removeAlt.toString();
 
-    console.log(" ------ In Dashboard, Processing user ------");
-
     if( characterID  ) {
         let target = id? id: _user.CharacterID;
 
