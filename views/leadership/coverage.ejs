@@ -114,7 +114,10 @@
 	let pilots = {};
 
 	let sort = {
-		byName: function(a,b) { a=a.name.toLowerCase(); b=b.name.toLowerCase(); if( a > b )return 1; if( a < b ) return -1; return 0; }
+		byName: function(a,b) {
+            a=a.name.toLowerCase();
+		    b=b.name.toLowerCase();
+            if( a > b )return 1; if( a < b ) return -1; return 0; }
 	};
 
 	(function initialize(){
@@ -123,11 +126,11 @@
 		// Adds all the corp members to a list and hash table
 		for( i = 0; i < given.corpMembers.length; i++ ) {
 			member = given.corpMembers[i];
-			id = member.character_id;
+			id = member.id;
 
 			pilots[id] = {
-				id: member.character_id,
-				name: member.character_name,
+				id: member.id,
+				name: member.name,
 				alts: [],
 				inCorp: true,
 				isMain: true,
@@ -172,7 +175,6 @@
 
 		for( i = 0, len = store.memberCharacters.length; i < len; i++ ) {
 			member = store.memberCharacters[i];
-
 			if( member.isMain ) {
 				store.corpMainCharacters.push( member );
 				member.alts = member.alts.map(function( alt ){
@@ -188,7 +190,6 @@
 	let coverage = (function(){
 
 		function renderAltRow( r, character ) {
-			console.log(character);
 
 			let classes = ['alt'];
 

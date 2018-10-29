@@ -21,7 +21,7 @@
 		}
 	};
 	sort.byName = function(a,b) { a=a.name.toLowerCase(); b=b.name.toLowerCase(); if( a > b )return 1; if( a < b ) return -1; return 0; };
-	sort.bycharacter_name = function(a,b) { a=a.character_name.toLowerCase(); b=b.character_name.toLowerCase(); if( a > b )return 1; if( a < b ) return -1; return 0; };
+	sort.bycharacter_name = function(a,b) { a=a.name.toLowerCase(); b=b.name.toLowerCase(); if( a > b )return 1; if( a < b ) return -1; return 0; };
 
 	const enum_rockType = Object.freeze ({
 		ore: 1,
@@ -106,9 +106,9 @@
 					<template v-for="pilot in mainPilots">
 					<tr class="main">
 						<td class="sm p-0">
-							<img v-bind:src="'https://imageserver.eveonline.com/Character/' + pilot.character_id + '_32.jpg'">
+							<img v-bind:src="'https://imageserver.eveonline.com/Character/' + pilot.id + '_32.jpg'">
 						</td>
-						<td colspan="2">{{pilot.character_name}}</td>
+						<td colspan="2">{{pilot.name}}</td>
 						<td class="n">{{ Number( ( ( pilot.oreValue + pilot.iceValue) * store.taxRate ) ).toLocaleString( undefined, store.iskOptions ) }}</td>
 						<td class="n">{{ pilot.oreValueStr }}</td>
 						<td class="n">{{ pilot.iceValueStr }}</td>
@@ -119,9 +119,9 @@
 					<tr v-if="store.options.showAlts" v-for="alt in pilot.alts" class="alt">
 						<td class="sm p-0"></td>
 						<td class="sm p-0">
-							<img v-bind:src="'https://imageserver.eveonline.com/Character/' + alt.character_id + '_32.jpg'">
+							<img v-bind:src="'https://imageserver.eveonline.com/Character/' + alt.id + '_32.jpg'">
 						</td>
-						<td>{{alt.character_name}}</td>
+						<td>{{alt.name}}</td>
 						<td class="n">{{ Number( ( ( alt.oreValue + alt.iceValue) * store.taxRate ) ).toLocaleString( undefined, store.iskOptions ) }}</td>
 						<td class="n">{{ alt.oreValueStr }}</td>
 						<td class="n">{{ alt.iceValueStr }}</td>
@@ -170,6 +170,8 @@
 	store.dictionary = {};
 	store.pilots 	= given.pilots;
 	store.rocks 	= given.rocks;
+
+	console.log(store.pilots);
 
 	hooks.minedTable = document.getElementById('mined-body-hook');
 
