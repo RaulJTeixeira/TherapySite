@@ -63,6 +63,7 @@ function krabicusRender(req, res, next) {
 		}).exec(),
 		typeIDModel.find({groupID: { $in: ROCK_GROUPS }}).select('id name groupID volume average_price').exec()
 	]).then((r)=>{
+		console.log(r);
 		return res.render('leadership/krabnomicon', {
 			pilots: r[0],
 			storePilots: r[1],

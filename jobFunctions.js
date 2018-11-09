@@ -88,12 +88,8 @@ function krabingImport() {
 
 		}).then((logs)=> {
 			if( ! logs ){
-                console.log("	--- nothing from miner!");
                 return ;
             }
-            console.log("	--- SOMETHING from the miner!");
-			return;
-
 			return logs.reduce((promise, log)=> {
 				return promise.then(()=> {
 					log.characterID = pilot.CharacterID;
@@ -102,7 +98,6 @@ function krabingImport() {
 					log.date = new Date(parts[0], parts[1] - 1, parts[2]);
 
 					let searchConditions = JSON.parse(JSON.stringify(log));
-
 
 					delete searchConditions.quantity;
 
