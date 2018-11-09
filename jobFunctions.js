@@ -78,14 +78,17 @@ function krabingImport() {
         delete pilot.__v;
 		return passport.refreshUser(pilot).then(function (pilot) {
 
-			if ( pilot && pilotHasScope(pilot, 'esi-industry.read_character_mining'))
-				return esi.industry.characterMiningLedger(pilot);
-			else
+			if ( pilot && pilotHasScope(pilot, 'esi-industry.read_character_mining')) {
+				console.log("	--- has scope needed");
+                return esi.industry.characterMiningLedger(pilot);
+            }else
 				return Promise.resolve([]);
 
 		}).then((logs)=> {
-			if( ! logs )
-				return ;
+			if( ! logs ){
+                console.log("	--- nothing from miner!");
+                return ;
+            }
 
 			return logs.reduce((promise, log)=> {
 				return promise.then(()=> {
