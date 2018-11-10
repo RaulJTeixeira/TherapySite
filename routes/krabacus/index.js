@@ -42,7 +42,6 @@ function krabicusRender(req, res, next) {
         month = MONTH_DESCRIPTION.indexOf( req.params.month );
 	}
 
-
 	year = year ? year : n.getFullYear();
 	month = isMonth ? month : n.getMonth();
 
