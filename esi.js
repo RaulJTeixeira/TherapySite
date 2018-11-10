@@ -516,7 +516,7 @@ module.exports = esi = {
 					_ledger = res.body;
 
 					let promises = [];
-					for( let i = 1; i <= res.headers['x-pages']; i++ ) {
+					for( let i = 2; i <= res.headers['x-pages']; i++ ) {
                         promises.push(
 							esiGetPaged( _url, {page: i}, user )
 						);

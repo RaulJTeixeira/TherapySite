@@ -98,7 +98,6 @@ function krabingImport() {
 					log.date = new Date(parts[0], parts[1] - 1, parts[2]);
 
 					let searchConditions = JSON.parse(JSON.stringify(log));
-
 					delete searchConditions.quantity;
 
 					return miningModel

@@ -171,8 +171,6 @@
 	store.pilots 	= given.pilots;
 	store.rocks 	= given.rocks;
 
-	console.log(given);
-
 	hooks.minedTable = document.getElementById('mined-body-hook');
 
 	function calculateValue( arr ) {
@@ -226,7 +224,10 @@
 			return enum_rockType.unknown;
 
 		});
-		dictionary(store,'pilot',given.pilots,'character_id',function( pilot ){
+
+		console.log(given.mining);
+		
+		dictionary(store,'pilot',given.pilots,'id',function( pilot ){
 			pilot.mining = [];
 			pilot.ore = [];
 			pilot.ice = [];
@@ -237,24 +238,16 @@
 		for( let i = given.storePilots.length; i --> 0; ) {
 			let pilot = given.storePilots[ i ];
 
-			console.log('pilot');
-			console.log( pilot );
 
 			if( pilot.parent ) {
 				let parent 	=  store.dictionary.pilot[ pilot.parent.CharacterID ];
 				let child 	=  store.dictionary.pilot[ pilot.CharacterID ];
 
-				console.log( 'parent' );
-				console.log( parent );
-
-				console.log( 'child' );
-				console.log( child );
-
 				if( child ) {
 					parent.alts.push(child);
 				}
 
-				grep( given.pilots, 'character_id', pilot.CharacterID );
+				grep( given.pilots, 'id', pilot.CharacterID );
 			}
 		}
 
@@ -268,6 +261,7 @@
 
 			let pilot = store.dictionary.pilot[ log.characterID ];
 			if( pilot ) {
+                                console.log("working with: " + log.characterID);
 				pilot.mining.push( log );
 
 				switch( rock.rockType ) {
@@ -282,6 +276,8 @@
 						break;
 					default: break;
 				}
+			} else {
+				console.log("PILOT NOT FOUND: " + log.characterID);
 			}
 		}
 
