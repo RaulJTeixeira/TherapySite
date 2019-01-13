@@ -51,7 +51,7 @@ module.exports = {
 		"corpID": 		439896599,
 		"clientID": 	"27d7cc7f01cc422788d9239175010293",
 		"secretKey": 	"rfHBQQsI5xonei3uMdBg7pA7elZyqlip6ZXaXObV",
-		"esiURL": 		"https://esi.tech.ccp.is/latest/",
+		"esiURL": 		"https://esi.evetech.net/latest/",
 		"loginURL": 	"https://login.eveonline.com/oauth/authorize",
 		"callbackURL": 	"http://sh0ktherapy.space/callback/eve",
 		"tokenURL": 	"https://login.eveonline.com/oauth/token",
