@@ -42,12 +42,12 @@ module.exports = {
 		"CharacterID": 		90903362,
 		"directors": [
 			1501833430, // Iron
-            996642987 // Thaer
+            		93619027 // Hannah
 		],
 		"secretkey": 		"PlanetOliverTwist" // Make sure this is not blank
 	},
 	"eve": {
-		"allianceID": 	499005583,
+		"allianceID": 	99005338,
 		"corpID": 		439896599,
 		"clientID": 	"27d7cc7f01cc422788d9239175010293",
 		"secretKey": 	"rfHBQQsI5xonei3uMdBg7pA7elZyqlip6ZXaXObV",
